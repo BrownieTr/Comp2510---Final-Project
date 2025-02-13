@@ -156,7 +156,7 @@ void addPatientRecord () {
 void viewPatientRecords () {
   printf("Patient ID\tName\tAge\tDiagnosis\tRoom Number\n");
   for(int i = 0; i < totalPatients; i++) {
-    printf("%d\t%s\t%d\t%s\t%d", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
+    printf("%d\t%s\t%d\t%s\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
   }
 }
 
@@ -164,7 +164,9 @@ void searchPatientRecord () {}
 
 void dischargePatientRecord () {}
 
-void manageDoctorSchedule () {}
+void manageDoctorSchedule () {
+
+}
 
 void addDoctor () {
   if (totalDoctors >= MAX_DOCTORS) {
@@ -195,9 +197,15 @@ void addDoctor () {
   printf("Doctor record added successfully!\n");
 }
 
-void viewDoctors () {}
+void viewDoctors () {
+  printf("Doctor ID\tName\n");
+  for(int i = 0; i < totalDoctors; i++) {
+    printf("%d\t\t%s\n", doctorIDs[i], doctorNames[i]);
+  }
+}
 
 int main() {
+  printf("%d", totalPatients);
   menu();
   return 0;
 }
