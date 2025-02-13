@@ -19,9 +19,10 @@ int patientRoomNums[MAX_PATIENTS];
 int totalPatients = 0;
 
 // Array to manage doctor schedule
-int doctorSchedule[MAX_DAYS_IN_WEEK][MAX_SHIFTS_IN_DAY];
+int doctorSchedule[MAX_DAYS_IN_WEEK][MAX_SHIFTS_IN_DAY]; // 1-3 = shift assigned, 0 = shift not assigned
 int doctorIDs[MAX_DOCTORS];
 char doctorNames[MAX_DOCTORS][50];
+int totalDoctorShifts[MAX_DOCTORS];
 int totalDoctors = 0;
 
 // Function prototypes
@@ -30,6 +31,8 @@ void viewPatientRecords();
 void searchPatientRecord();
 void dischargePatientRecord();
 void manageDoctorSchedule();
+void assignShift(int index, int dayInWeek);
+void viewSchedule();
 void addDoctor();
 void viewDoctors();
 int idExists(int arr[], int size,int id);
@@ -43,9 +46,10 @@ void menu() {
     printf("3. Search Patient\n");
     printf("4. Discharge Patient\n");
     printf("5. Manage Doctor Schedule\n");
-    printf("6. Add Doctor Record\n");
-    printf("7. View All Doctors\n");
-    printf("8. Exit\n");
+    printf("6. View Doctor Schedule\n");
+    printf("7. Add Doctor Record\n");
+    printf("8. View All Doctors\n");
+    printf("9. Exit\n");
     printf("Enter your choice: ");
     scanf("%d", &choice);
     getchar();
@@ -56,12 +60,13 @@ void menu() {
       case 3: searchPatientRecord(); break;
       case 4: dischargePatientRecord(); break;
       case 5: manageDoctorSchedule(); break;
-      case 6: addDoctor(); break;
-      case 7: viewDoctors(); break;
-      case 8: printf("Exiting...\n"); break;
+      case 6: viewSchedule(); break;
+      case 7: addDoctor(); break;
+      case 8: viewDoctors(); break;
+      case 9: printf("Exiting...\n"); break;
       default: printf("Invalid choice! Try again.\n");
     }
-  } while (choice != 8);
+  } while (choice != 9);
 }
 
 int idExists (int arr[], int size, int id) {
@@ -97,18 +102,8 @@ void addPatientRecord () {
   int patientAge;
   char patientDiag[250];
   int patientRoomNum;
-  int doctorID;
 
-  printf("Enter Doctor ID to verify: ");
-  scanf("%d", &doctorID);
-  getchar();
-
-  if (doctorID < 0  || idExists(doctorIDs, totalDoctors, doctorID) == -1) {
-    printf("Invalid ID or non-existent ID!\n");
-    return;
-  }
-
-  printf("Enter the patient ID (positive number): ");
+  printf("\nEnter the patient ID (positive number): ");
   scanf("%d", &patientID);
   getchar();
 
@@ -154,7 +149,7 @@ void addPatientRecord () {
 }
 
 void viewPatientRecords () {
-  printf("Patient ID\tName\tAge\tDiagnosis\tRoom Number\n");
+  printf("\nPatient ID\tName\tAge\tDiagnosis\tRoom Number\n");
   for(int i = 0; i < totalPatients; i++) {
     printf("%d\t%s\t%d\t%s\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
   }
@@ -165,7 +160,83 @@ void searchPatientRecord () {}
 void dischargePatientRecord () {}
 
 void manageDoctorSchedule () {
+  int doctorID;
+  int dayInWeek;
+  int shiftInDay;
 
+  printf("\nEnter Doctor ID to assign shifts: ");
+  scanf("%d", &doctorID);
+  getchar();
+  int index = idExists(doctorIDs, totalDoctors, doctorID);
+
+  if (doctorID < 0 || index == -1) {
+    printf("The doctor ID is invalid or didn't exist!\n");
+    return;
+  } else if (totalDoctorShifts[index] >= 7) {
+    printf("This doctor took enough shifts this week!\n");
+    return;
+  }
+
+  do {
+    printf("Enter day to assign shift (8 to exit session): ");
+    scanf("%d", &dayInWeek);
+    getchar();
+    if (dayInWeek < 1 || dayInWeek > 8) {
+      printf("The days in week should be between 1 and 7! Try again.\n");
+
+    } else if (dayInWeek == 8) {
+      printf("Session ending...\n");
+      return;
+    } else {
+      for (int i = 0; i < MAX_SHIFTS_IN_DAY; i++) {
+        if (doctorSchedule[dayInWeek-1][i] == 0) {
+          assignShift(index, dayInWeek);
+          dayInWeek = 8;
+          break;
+        }
+      }
+      if (dayInWeek == 8) {
+        break;
+      }
+      printf("This day's shifts have all been taken! Choose a different day.\n");
+    }
+  } while (dayInWeek != 8);
+}
+
+void assignShift(int index, int dayInWeek) {
+  int shiftInDay;
+  do {
+    printf("Enter shift to assign (1-morning, 2-afternoon, 3-evening)\n");
+    scanf("%d", &shiftInDay);
+    getchar();
+    if (shiftInDay < 1 || shiftInDay > 3) {
+      printf("This shift is invalid! Try again\n");
+    } else {
+        if (doctorSchedule[dayInWeek - 1][shiftInDay - 1] == 0) {
+          doctorSchedule[dayInWeek - 1][shiftInDay - 1] = index + 1;
+          totalDoctorShifts[index]++ ;
+          printf("The shift is successfully assigned!\n");
+        } else {
+          printf("This shift is taken! Try again\n");
+          shiftInDay = 0;
+        }
+    }
+  } while (shiftInDay < 1 || shiftInDay > 3);
+}
+
+void viewSchedule () {
+  printf("\nDoctor Schedule\n");
+  for(int i = 0; i < MAX_DAYS_IN_WEEK; i++) {
+    printf("Day %d:\t", i + 1);
+    for (int j = 0; j < MAX_SHIFTS_IN_DAY; j++) {
+      if (doctorSchedule[i][j] == 0) {
+        printf("Shift %d: Not Assigned Yet\t", doctorSchedule[i][j]);
+      } else {
+        printf("Shift %d: Doctor %s\t\t", doctorSchedule[i][j], doctorNames[doctorSchedule[i][j] - 1]);
+      }
+    }
+    printf("\n");
+  }
 }
 
 void addDoctor () {
@@ -177,7 +248,7 @@ void addDoctor () {
   int doctorID;
   char doctorName[50];
 
-  printf("Enter Doctor ID (positive number): ");
+  printf("\nEnter Doctor ID (positive number): ");
   scanf("%d", &doctorID);
   getchar();
 
@@ -198,14 +269,13 @@ void addDoctor () {
 }
 
 void viewDoctors () {
-  printf("Doctor ID\tName\n");
+  printf("\nDoctor ID\tName\n");
   for(int i = 0; i < totalDoctors; i++) {
     printf("%d\t\t%s\n", doctorIDs[i], doctorNames[i]);
   }
 }
 
 int main() {
-  printf("%d", totalPatients);
   menu();
   return 0;
 }
