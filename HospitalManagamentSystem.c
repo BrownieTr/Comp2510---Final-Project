@@ -30,8 +30,8 @@ void viewPatientRecords();
 void searchPatientRecord();
 void dischargePatientRecord();
 void manageDoctorSchedule();
-void idExists(arr[], size, id);
-void roomNumExists(arr[], size, roomNum);
+int idExists(int arr[], int size,int id);
+int roomNumExists(int arr[], int size,int roomNum);
 
 void menu() {
   int choice;
@@ -58,7 +58,7 @@ void menu() {
   } while (choice != 6);
 }
 
-void idExists (int arr[], int size, int id) {
+int idExists (int arr[], int size, int id) {
   for (int i = 0; i < size; i++) {
     if (arr[i] == id) {
       return i;
@@ -67,7 +67,7 @@ void idExists (int arr[], int size, int id) {
   return -1;
 }
 
-void roomNumExits (int arr[], int size, int roomNum) {
+int roomNumExits (int arr[], int size, int roomNum) {
   int totalRoomNum = 0;
   for (int i = 0; i < size; i++) {
     if (arr[i] == roomNum) {
@@ -147,7 +147,12 @@ void addPatientRecord () {
   printf("Patient record added successfully!\n");
 }
 
-void viewPatientRecords () {}
+void viewPatientRecords () {
+  printf("Patient ID\tName\tAge\tDiagnosis\tRoom Number\n");
+  for(int i = 0; i < totalPatients; i++) {
+    printf("%d\t%s\t%d\t%s\td", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
+  }
+}
 
 void searchPatientRecord () {}
 
