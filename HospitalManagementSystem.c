@@ -35,12 +35,15 @@ void assignShift(int index, int dayInWeek);
 void viewSchedule();
 void addDoctor();
 void viewDoctors();
+void clearInputBuffer();
+int scanInt();
 int idExists(int arr[], int size,int id);
 int roomNumExists(int arr[], int size,int roomNum);
 
 void menu() {
   int choice;
   do {
+    choice = 0;
     printf("\n1. Add Patient record\n");
     printf("2. View All Patients\n");
     printf("3. Search Patient\n");
@@ -51,8 +54,7 @@ void menu() {
     printf("8. View All Doctors\n");
     printf("9. Exit\n");
     printf("Enter your choice: ");
-    scanf("%d", &choice);
-    getchar();
+    choice = scanInt();
 
     switch (choice) {
       case 1: addPatientRecord(); break;
@@ -117,8 +119,7 @@ void addPatientRecord () {
   patientName[strcspn(patientName, "\n")] = 0;
 
   printf("Enter the patient age: ");
-  scanf("%d", &patientAge);
-  getchar();
+  patientAge = scanInt();
 
   if (patientAge < 0 || patientAge > 130) {
     printf("The patient age is invalid!\n");
@@ -130,8 +131,7 @@ void addPatientRecord () {
   patientDiag[strcspn(patientDiag, "\n")] = 0;
 
   printf("Enter the patient room number to assign (positive number): ");
-  scanf("%d", &patientRoomNum);
-  getchar();
+  patientRoomNum = scanInt();
 
   if (patientRoomNum < 0 || roomNumExists(patientRoomNums, totalPatients, patientRoomNum) != -1) {
     printf("Room number invalid or room is full!\n");
@@ -149,15 +149,109 @@ void addPatientRecord () {
 }
 
 void viewPatientRecords () {
-  printf("\nPatient ID\tName\tAge\tDiagnosis\tRoom Number\n");
+  printf("\nPatient ID\tName\t\t\tAge\tDiagnosis\tRoom Number\n");
   for(int i = 0; i < totalPatients; i++) {
-    printf("%d\t%s\t%d\t%s\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
+    printf("%d\t\t%s\t\t%d\t%s\t\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
   }
 }
 
-void searchPatientRecord () {}
+void searchPatientRecord () {
+  int inputMethod;
+  int foundPatientID = 0;
+  printf("Do you want to search by patient's ID or name?\n1.By ID\n2.By name");
+  scanf("%d", &inputMethod);
+  getchar();
+  switch (inputMethod) {
+    case 1:
+      int patientID;
+      printf("Enter the patient ID: \n");
+      patientID = scanInt();
+      for(int i = 0; i < totalPatients; i++) {
+        if (patientIDs[i] == patientID) {
+          foundPatientID = 1;
+          printf("Patient ID\tName\t\t\tAge\tDiagnosis\tRoom Number\n");
+          printf("%d\t\t%s\t\t%d\t%s\t\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
+          break;
+        }
+      }
+      break;
+    case 2:
+      char patientName[50];
+      printf("Enter the patient name: ");
+      fgets(patientName, sizeof(patientName), stdin);
+      getchar();
+      for(int i = 0; i < totalPatients; i++) {
+        if (patientNames[i] == patientName) {
+          foundPatientID = 1;
+          printf("Patient ID\tName\t\t\tAge\tDiagnosis\tRoom Number\n");
+          printf("%d\t\t%s\t\t%d\t%s\t\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
+          break;
+        }
+      }
+      break;
+      default:
+        printf("Invalid Input!\n");
+        return;
+  }
+  if (foundPatientID == 0) {
+    printf("The patient is not found!\n");
+  }
+  return;
+}
 
-void dischargePatientRecord () {}
+void dischargePatientRecord () {
+  int inputMethod;
+  int foundPatientID = 0;
+  int patientIndex;
+  printf("Do you want to search by patient's ID or name?\n1.By ID\n2.By name");
+  inputMethod = scanInt();
+  switch (inputMethod) {
+    case 1:
+      int patientID;
+    printf("Enter the patient ID: ");
+    scanf("%d", &patientID);
+    getchar();
+    for(int i = 0; i < totalPatients; i++) {
+      if (patientIDs[i] == patientID) {
+        foundPatientID = 1;
+        patientIndex = i;
+        break;
+      }
+    }
+    break;
+    case 2:
+      char patientName[50];
+    printf("Enter the patient name: ");
+    fgets(patientName, sizeof(patientName), stdin);
+    getchar();
+    for(int i = 0; i < totalPatients; i++) {
+      if (patientNames[i] == patientName) {
+        foundPatientID = 1;
+        patientIndex = i;
+        break;
+      }
+    }
+    break;
+    default:
+      printf("Invalid Input!\n");
+    return;
+  }
+  if (foundPatientID == 0) {
+    printf("The patient is not found!\n");
+    return;
+  }else{
+    totalPatients--;
+    for(int j = patientIndex; j < totalPatients-1; j++) {
+      patientIDs[j] = patientIDs[j+1];
+      strcpy(patientNames[j+1], patientNames[j]);
+      patientAges[j] = patientAges[j+1];
+      strcpy(patientDiagnosis[j+1],patientDiagnosis[j]);
+      patientRoomNums[j] = patientRoomNums[j+1];
+    }
+  }
+  return;
+}
+
 
 void manageDoctorSchedule () {
   int doctorID;
@@ -248,9 +342,8 @@ void addDoctor () {
   int doctorID;
   char doctorName[50];
 
-  printf("\nEnter Doctor ID (positive number): ");
-  scanf("%d", &doctorID);
-  getchar();
+  printf("Enter Doctor ID (positive number): ");
+  doctorID = scanInt();
 
   if (doctorID < 0 || idExists(doctorIDs, totalDoctors, doctorID) != -1) {
     printf("The doctor ID is invalid or already exist!\n");
@@ -272,6 +365,23 @@ void viewDoctors () {
   printf("\nDoctor ID\tName\n");
   for(int i = 0; i < totalDoctors; i++) {
     printf("%d\t\t%s\n", doctorIDs[i], doctorNames[i]);
+  }
+}
+
+void clearInputBuffer () {
+  while (getchar() != '\n') {
+  }
+}
+
+int scanInt(){
+  int num;
+  char term;
+  if(scanf("%d%c", &num, &term) != 2 || term != '\n'){
+    clearInputBuffer();
+    return 0;
+  }
+  else{
+    return num;
   }
 }
 
