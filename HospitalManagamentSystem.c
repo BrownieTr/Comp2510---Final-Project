@@ -150,7 +150,7 @@ void addPatientRecord () {
 void viewPatientRecords () {
   printf("Patient ID\tName\tAge\tDiagnosis\tRoom Number\n");
   for(int i = 0; i < totalPatients; i++) {
-    printf("%d\t%s\t%d\t%s\td", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
+    printf("%d\t%s\t%d\t%s\t%d", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
   }
 }
 
