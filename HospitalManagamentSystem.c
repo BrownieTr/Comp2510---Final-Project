@@ -58,7 +58,29 @@ void menu() {
   } while (choice != 6);
 }
 
-void addPatientRecord() {
+void idExists (int arr[], int size, int id) {
+  for (int i = 0; i < size; i++) {
+    if (arr[i] == id) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+void roomNumExits (int arr[], int size, int roomNum) {
+  int totalRoomNum = 0;
+  for (int i = 0; i < size; i++) {
+    if (arr[i] == roomNum) {
+      totalRoomNum++;
+    }
+    if (totalRoomNum >= 2) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+void addPatientRecord () {
   if (totalPatients >= MAX_PATIENTS) {
     printf("Too many patients in the moment. Discharge one first!\n");
     return;
@@ -125,25 +147,15 @@ void addPatientRecord() {
   printf("Patient record added successfully!\n");
 }
 
-void idExists (int arr[], int size, int id) {
-  for (int i = 0; i < size; i++) {
-    if (arr[i] == id) {
-      return i;
-    }
-  }
-  return -1;
-}
+void viewPatientRecords () {}
 
-void roomNumExits (int arr[], int size, int roomNum) {
-  int totalRoomNum = 0;
-  for (int i = 0; i < size; i++) {
-    if (arr[i] == roomNum) {
-      totalRoomNum++;
-    }
-    if (totalRoomNum >= 2) {
-      return i;
-    }
-  }
-  return -1;
-}
+void searchPatientRecord () {}
+
+void dischargePatientRecord () {}
+
+void addDoctor () {}
+
+void viewDoctors () {}
+
+void manageDoctorSchedule () {}
 
