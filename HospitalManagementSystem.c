@@ -154,9 +154,9 @@ void addPatientRecord () {
 }
 
 void viewPatientRecords () {
-  printf("Patient ID\tName\tAge\tDiagnosis\tRoom Number\n");
+  printf("Patient ID\tName\t\t\tAge\tDiagnosis\tRoom Number\n");
   for(int i = 0; i < totalPatients; i++) {
-    printf("%d\t%s\t%d\t%s\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
+    printf("%d\t\t%s\t\t%d\t%s\t\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
   }
 }
 
@@ -169,13 +169,14 @@ void searchPatientRecord () {
   switch (inputMethod) {
     case 1:
       int patientID;
-      printf("Enter the patient ID: ");
+      printf("Enter the patient ID: \n");
       scanf("%d", &patientID);
       getchar();
       for(int i = 0; i < totalPatients; i++) {
         if (patientIDs[i] == patientID) {
           foundPatientID = 1;
-          printf("%d\t%s\t%d\t%s\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
+          printf("Patient ID\tName\t\t\tAge\tDiagnosis\tRoom Number\n");
+          printf("%d\t\t%s\t\t%d\t%s\t\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
           break;
         }
       }
@@ -188,7 +189,8 @@ void searchPatientRecord () {
       for(int i = 0; i < totalPatients; i++) {
         if (patientNames[i] == patientName) {
           foundPatientID = 1;
-          printf("%d\t%s\t%d\t%s\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
+          printf("Patient ID\tName\t\t\tAge\tDiagnosis\tRoom Number\n");
+          printf("%d\t\t%s\t\t%d\t%s\t\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
           break;
         }
       }
