@@ -7,8 +7,6 @@
     <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
-    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
-    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="3" type="long" />
     <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppFormatterOtherPage" type="string" />
   </component>
   <component name="CMakeProjectFlavorService">
@@ -22,6 +20,7 @@
   <component name="ChangeListManager">
     <list default="true" id="3f4e8696-852b-4d2e-9f6e-33bbed8097d5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HospitalManagamentSystem.c" beforeDir="false" afterPath="$PROJECT_DIR$/HospitalManagamentSystem.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +68,7 @@
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Raymond/Documents/Homework/comp2510/Comp2510---Final-Project&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/tkngu/OneDrive/Documents/Canada/BCIT stuffs/CST matters/Term 2/COMP 2510/Labs/Lab 5/LMS.c&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -93,9 +92,8 @@
       <workItem from="1739325008857" duration="2212000" />
       <workItem from="1739398966934" duration="760000" />
       <workItem from="1739402972610" duration="2152000" />
-      <workItem from="1739406379955" duration="2669000" />
-      <workItem from="1739411730420" duration="1900000" />
-      <workItem from="1739464184449" duration="358000" />
+      <workItem from="1739406379955" duration="3178000" />
+      <workItem from="1739424643800" duration="43000" />
     </task>
     <servers />
   </component>
