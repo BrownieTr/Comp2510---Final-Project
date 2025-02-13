@@ -154,9 +154,103 @@ void viewPatientRecords () {
   }
 }
 
-void searchPatientRecord () {}
+void searchPatientRecord () {
+  int inputMethod;
+  int foundPatientID = 0;
+  printf("Do you want to search by patient's ID or name?\n1.By ID\n2.By name");
+  scanf("%d", &inputMethod);
+  getchar();
+  switch (inputMethod) {
+    case 1:
+      int patientID;
+      printf("Enter the patient ID: ");
+      scanf("%d", &patientID);
+      getchar();
+      for(int i = 0; i < totalPatients; i++) {
+        if (patientIDs[i] == patientID) {
+          foundPatientID = 1;
+          printf("%d\t%s\t%d\t%s\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
+          break;
+        }
+      }
+      break;
+    case 2:
+      char patientName[50];
+      printf("Enter the patient name: ");
+      fgets(patientName, sizeof(patientName), stdin);
+      getchar();
+      for(int i = 0; i < totalPatients; i++) {
+        if (patientNames[i] == patientName) {
+          foundPatientID = 1;
+          printf("%d\t%s\t%d\t%s\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
+          break;
+        }
+      }
+      break;
+      default:
+        printf("Invalid Input!\n");
+        return;
+  }
+  if (foundPatientID == 0) {
+    printf("The patient is not found!\n");
+  }
+  return;
+}
 
-void dischargePatientRecord () {}
+void dischargePatientRecord () {
+  int inputMethod;
+  int foundPatientID = 0;
+  int patientIndex;
+  printf("Do you want to search by patient's ID or name?\n1.By ID\n2.By name");
+  scanf("%d", &inputMethod);
+  getchar();
+  switch (inputMethod) {
+    case 1:
+      int patientID;
+    printf("Enter the patient ID: ");
+    scanf("%d", &patientID);
+    getchar();
+    for(int i = 0; i < totalPatients; i++) {
+      if (patientIDs[i] == patientID) {
+        foundPatientID = 1;
+        patientIndex = i;
+        break;
+      }
+    }
+    break;
+    case 2:
+      char patientName[50];
+    printf("Enter the patient name: ");
+    fgets(patientName, sizeof(patientName), stdin);
+    getchar();
+    for(int i = 0; i < totalPatients; i++) {
+      if (patientNames[i] == patientName) {
+        foundPatientID = 1;
+        patientIndex = i;
+        break;
+      }
+    }
+    break;
+    default:
+      printf("Invalid Input!\n");
+    return;
+  }
+  if (foundPatientID == 0) {
+    printf("The patient is not found!\n");
+    return;
+  }else{
+    totalPatients--;
+    for(int j = patientIndex; j < totalPatients-1; j++) {
+      patientIDs[j] = patientIDs[j+1];
+      strcpy(patientNames[j+1], patientNames[j]);
+      patientAges[j] = patientAges[j+1];
+      strcpy(patientDiagnosis[j+1],patientDiagnosis[j]);
+      patientRoomNums[j] = patientRoomNums[j+1];
+    }
+  }
+  return;
+}
+
 
 void addDoctor () {}
 
