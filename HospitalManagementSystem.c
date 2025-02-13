@@ -36,7 +36,7 @@ int roomNumExists(int arr[], int size,int roomNum);
 void menu() {
   int choice;
   do {
-    printf("1. Add Patient record\n");
+    printf("\n1. Add Patient record\n");
     printf("2. View All Patients\n");
     printf("3. Search Patient\n");
     printf("4. Discharge Patient\n");
@@ -67,7 +67,7 @@ int idExists (int arr[], int size, int id) {
   return -1;
 }
 
-int roomNumExits (int arr[], int size, int roomNum) {
+int roomNumExists (int arr[], int size, int roomNum) {
   int totalRoomNum = 0;
   for (int i = 0; i < size; i++) {
     if (arr[i] == roomNum) {
@@ -89,7 +89,7 @@ void addPatientRecord () {
   int patientID;
   char patientName[50];
   int patientAge;
-  char patientDiagnosis[250];
+  char patientDiag[250];
   int patientRoomNum;
   int doctorID;
 
@@ -125,8 +125,8 @@ void addPatientRecord () {
   }
 
   printf("Enter the patient diagnosis: ");
-  fgets(patientDiagnosis, sizeof(patientDiagnosis), stdin);
-  patientDiagnosis[strcspn(patientDiagnosis, "\n")] = 0;
+  fgets(patientDiag, sizeof(patientDiag), stdin);
+  patientDiag[strcspn(patientDiag, "\n")] = 0;
 
   printf("Enter the patient room number to assign (positive number): ");
   scanf("%d", &patientRoomNum);
@@ -140,7 +140,7 @@ void addPatientRecord () {
   patientIDs[totalPatients] = patientID;
   strcpy(patientNames[totalPatients], patientName);
   patientAges[totalPatients] = patientAge;
-  strcpy(patientDiagnosis[totalPatients], patientDiagnosis);
+  strcpy(patientDiagnosis[totalPatients], patientDiag);
   patientRoomNums[totalPatients] = patientRoomNum;
   totalPatients++;
 
@@ -164,3 +164,7 @@ void viewDoctors () {}
 
 void manageDoctorSchedule () {}
 
+int main() {
+  menu();
+  return 0;
+}
