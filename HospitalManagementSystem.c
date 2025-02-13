@@ -30,6 +30,8 @@ void viewPatientRecords();
 void searchPatientRecord();
 void dischargePatientRecord();
 void manageDoctorSchedule();
+void addDoctor();
+void viewDoctors();
 int idExists(int arr[], int size,int id);
 int roomNumExists(int arr[], int size,int roomNum);
 
@@ -41,7 +43,9 @@ void menu() {
     printf("3. Search Patient\n");
     printf("4. Discharge Patient\n");
     printf("5. Manage Doctor Schedule\n");
-    printf("6. Exit\n");
+    printf("6. Add Doctor Record\n");
+    printf("7. View All Doctors\n");
+    printf("8. Exit\n");
     printf("Enter your choice: ");
     scanf("%d", &choice);
     getchar();
@@ -52,10 +56,12 @@ void menu() {
       case 3: searchPatientRecord(); break;
       case 4: dischargePatientRecord(); break;
       case 5: manageDoctorSchedule(); break;
-      case 6: printf("Exiting...\n"); break;
+      case 6: addDoctor(); break;
+      case 7: viewDoctors(); break;
+      case 8: printf("Exiting...\n"); break;
       default: printf("Invalid choice! Try again.\n");
     }
-  } while (choice != 6);
+  } while (choice != 8);
 }
 
 int idExists (int arr[], int size, int id) {
@@ -150,7 +156,7 @@ void addPatientRecord () {
 void viewPatientRecords () {
   printf("Patient ID\tName\tAge\tDiagnosis\tRoom Number\n");
   for(int i = 0; i < totalPatients; i++) {
-    printf("%d\t%s\t%d\t%s\t%d", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
+    printf("%d\t%s\t%d\t%s\t%d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
   }
 }
 
@@ -252,13 +258,48 @@ void dischargePatientRecord () {
 }
 
 
-void addDoctor () {}
+void manageDoctorSchedule () {
 
-void viewDoctors () {}
+}
 
-void manageDoctorSchedule () {}
+void addDoctor () {
+  if (totalDoctors >= MAX_DOCTORS) {
+    printf("Too many doctors!\n");
+    return;
+  }
+
+  int doctorID;
+  char doctorName[50];
+
+  printf("Enter Doctor ID (positive number): ");
+  scanf("%d", &doctorID);
+  getchar();
+
+  if (doctorID < 0 || idExists(doctorIDs, totalDoctors, doctorID) != -1) {
+    printf("The doctor ID is invalid or already exist!\n");
+    return;
+  }
+
+  printf("Enter the doctor name: ");
+  fgets(doctorName, sizeof(doctorName), stdin);
+  doctorName[strcspn(doctorName, "\n")] = 0;
+
+  doctorIDs[totalDoctors] = doctorID;
+  strcpy(doctorNames[totalDoctors], doctorName);
+  totalDoctors++;
+
+  printf("Doctor record added successfully!\n");
+}
+
+void viewDoctors () {
+  printf("Doctor ID\tName\n");
+  for(int i = 0; i < totalDoctors; i++) {
+    printf("%d\t\t%s\n", doctorIDs[i], doctorNames[i]);
+  }
+}
 
 int main() {
+  printf("%d", totalPatients);
   menu();
   return 0;
 }
