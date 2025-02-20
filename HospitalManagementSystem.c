@@ -1,6 +1,9 @@
-//
-// Created by tkngu on 2025-02-11.
-//
+/*
+Hospital Management System
+Author: tkngu
+Date: 2025-02-11
+Description: A simple C program to manage patient records and doctor schedules.
+*/
 
 #include <stdio.h>
 #include <string.h>
@@ -10,7 +13,7 @@
 #define MAX_DAYS_IN_WEEK 7
 #define MAX_SHIFTS_IN_DAY 3
 
-// Arrays to store patient's record details
+// Arrays to store patient records
 int patientIDs[MAX_PATIENTS];
 char patientNames[MAX_PATIENTS][50];
 int patientAges[MAX_PATIENTS];
@@ -18,8 +21,8 @@ char patientDiagnosis[MAX_PATIENTS][250];
 int patientRoomNums[MAX_PATIENTS];
 int totalPatients = 0;
 
-// Array to manage doctor schedule
-int doctorSchedule[MAX_DAYS_IN_WEEK][MAX_SHIFTS_IN_DAY]; // 1-3 = shift assigned, 0 = shift not assigned
+// Arrays to manage doctor schedules
+int doctorSchedule[MAX_DAYS_IN_WEEK][MAX_SHIFTS_IN_DAY]; // 1-3 = shift assigned, 0 = not assigned
 int doctorIDs[MAX_DOCTORS];
 char doctorNames[MAX_DOCTORS][50];
 int totalDoctorShifts[MAX_DOCTORS];
@@ -41,9 +44,10 @@ int scanInt();
 int idExists(int arr[], int size,int id);
 int roomNumExists(int arr[], int size,int roomNum);
 
+// Main menu function
 void menu() {
   int choice;
-  printf("\e[1;1H\e[2J");
+  printf("\e[1;1H\e[2J");// Clear screen
   do {
     choice = 0;
     printf("\n1. Add Patient record\n");
@@ -73,32 +77,35 @@ void menu() {
   } while (choice != 9);
 }
 
-int idExists (int arr[], int size, int id) {
+// Function to check if an ID exists in an array
+int idExists(int arr[], int size, int id) {
   for (int i = 0; i < size; i++) {
     if (arr[i] == id) {
-      return i;
+      return i; // Return the index where the ID exists
     }
   }
-  return -1;
+  return -1; // Return -1 if not found
 }
 
-int roomNumExists (int arr[], int size, int roomNum) {
+// Function to check if a room number is already occupied by two patients
+int roomNumExists(int arr[], int size, int roomNum) {
   int totalRoomNum = 0;
   for (int i = 0; i < size; i++) {
     if (arr[i] == roomNum) {
-      totalRoomNum++;
+      totalRoomNum++; // Count how many times the room is assigned
     }
     if (totalRoomNum >= 2) {
-      return i;
+      return i; // Return the index if the room is full
     }
   }
-  return -1;
+  return -1; // Return -1 if the room is available
 }
 
+// Function to add a patient record
 void addPatientRecord () {
   printf("\e[1;1H\e[2J");
   if (totalPatients >= MAX_PATIENTS) {
-    printf("Too many patients in the moment. Discharge one first!\n");
+    printf("Too many patients at the moment. Discharge one first!\n");
     return;
   }
 
@@ -112,14 +119,14 @@ void addPatientRecord () {
   patientID = scanInt();
 
   if (patientID <= 0 || idExists(patientIDs, totalPatients, patientID) != -1) {
-    printf("The patient ID is invalid or already exist!\n");
+    printf("The patient ID is invalid or already exists!\n");
     returnToMenu();
     return;
   }
 
   printf("Enter the patient name: ");
   fgets(patientName, sizeof(patientName), stdin);
-  patientName[strcspn(patientName, "\n")] = 0;
+  patientName[strcspn(patientName, "\n")] = 0; // Remove newline character
 
   printf("Enter the patient age: ");
   patientAge = scanInt();
@@ -132,7 +139,7 @@ void addPatientRecord () {
 
   printf("Enter the patient diagnosis: ");
   fgets(patientDiag, sizeof(patientDiag), stdin);
-  patientDiag[strcspn(patientDiag, "\n")] = 0;
+  patientDiag[strcspn(patientDiag, "\n")] = 0; // Remove newline character
 
   printf("Enter the patient room number to assign (positive number): ");
   patientRoomNum = scanInt();
@@ -143,6 +150,7 @@ void addPatientRecord () {
     return;
   }
 
+  // Store patient details in arrays
   patientIDs[totalPatients] = patientID;
   strcpy(patientNames[totalPatients], patientName);
   patientAges[totalPatients] = patientAge;
@@ -155,6 +163,7 @@ void addPatientRecord () {
   return;
 }
 
+// Function to view all patient records
 void viewPatientRecords () {
   printf("\e[1;1H\e[2J");
   printf("%-10s%-15s%-10s%-15s%-10s\n","ID","Name","Age","Diagnosis","Room Number");
@@ -373,7 +382,7 @@ void returnToMenu () {
 }
 
 int main() {
-  printf("%d", totalPatients);
-  menu();
+  printf("%d", totalPatients); // Print the total number of patients (debugging purpose)
+  menu(); // Call the menu function
   return 0;
 }
