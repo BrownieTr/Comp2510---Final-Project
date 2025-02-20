@@ -43,9 +43,9 @@ int roomNumExists(int arr[], int size,int roomNum);
 
 void menu() {
   int choice;
+  printf("\e[1;1H\e[2J");
   do {
     choice = 0;
-    printf("\e[1;1H\e[2J");
     printf("\n1. Add Patient record\n");
     printf("2. View All Patients\n");
     printf("3. Search Patient\n");
@@ -96,6 +96,7 @@ int roomNumExists (int arr[], int size, int roomNum) {
 }
 
 void addPatientRecord () {
+  printf("\e[1;1H\e[2J");
   if (totalPatients >= MAX_PATIENTS) {
     printf("Too many patients in the moment. Discharge one first!\n");
     return;
@@ -108,8 +109,7 @@ void addPatientRecord () {
   int patientRoomNum;
 
   printf("\nEnter the patient ID (positive number): ");
-  scanf("%d", &patientID);
-  getchar();
+  patientID = scanInt();
 
   if (patientID <= 0 || idExists(patientIDs, totalPatients, patientID) != -1) {
     printf("The patient ID is invalid or already exist!\n");
@@ -156,6 +156,7 @@ void addPatientRecord () {
 }
 
 void viewPatientRecords () {
+  printf("\e[1;1H\e[2J");
   printf("%-10s%-15s%-10s%-15s%-10s\n","ID","Name","Age","Diagnosis","Room Number");
   for(int i = 0; i < totalPatients; i++) {
     printf("%-10d%-15s%-10d%-15s%-10d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
@@ -164,12 +165,8 @@ void viewPatientRecords () {
 }
 
 void searchPatientRecord () {
-  int inputMethod;
   int foundPatientID = 0;
-  printf("Do you want to search by patient's ID or name?\n1.By ID\n2.By name");
-  inputMethod = scanInt();
-  switch (inputMethod) {
-    case 1:
+  printf("\e[1;1H\e[2J");
       int patientID;
       printf("Enter the patient ID: \n");
       patientID = scanInt();
@@ -181,26 +178,6 @@ void searchPatientRecord () {
           break;
         }
       }
-      break;
-    case 2:
-      char patientName[50];
-      printf("Enter the patient name: ");
-      fgets(patientName, sizeof(patientName), stdin);
-      getchar();
-      for(int i = 0; i < totalPatients; i++) {
-        if (patientNames[i] == patientName) {
-          foundPatientID = 1;
-          printf("%-10s%-15s%-10s%-15s%-10s\n","ID","Name","Age","Diagnosis","Room Number");
-          printf("%-10d%-15s%-10d%-15s%-10d\n", patientIDs[i], patientNames[i], patientAges[i], patientDiagnosis[i],patientRoomNums[i]);
-          break;
-        }
-      }
-      break;
-      default:
-        printf("Invalid Input!\n");
-        returnToMenu();
-        return;
-  }
   if (foundPatientID == 0) {
     printf("The patient is not found!\n");
   }
@@ -212,10 +189,7 @@ void dischargePatientRecord () {
   int inputMethod;
   int foundPatientID = 0;
   int patientIndex;
-  printf("Do you want to search by patient's ID or name?\n1.By ID\n2.By name");
-  inputMethod = scanInt();
-  switch (inputMethod) {
-    case 1:
+  printf("\e[1;1H\e[2J");
       int patientID;
     printf("Enter the patient ID: ");
     patientID = scanInt();
@@ -226,25 +200,6 @@ void dischargePatientRecord () {
         break;
       }
     }
-    break;
-    case 2:
-      char patientName[50];
-    printf("Enter the patient name: ");
-    fgets(patientName, sizeof(patientName), stdin);
-    getchar();
-    for(int i = 0; i < totalPatients; i++) {
-      if (patientNames[i] == patientName) {
-        foundPatientID = 1;
-        patientIndex = i;
-        break;
-      }
-    }
-    break;
-    default:
-      printf("Invalid Input!\n");
-      returnToMenu();
-    return;
-  }
   if (foundPatientID == 0) {
     printf("The patient is not found!\n");
     return;
@@ -258,6 +213,7 @@ void dischargePatientRecord () {
       patientRoomNums[j] = patientRoomNums[j+1];
     }
   }
+  printf("Patient removed!");
   returnToMenu();
   return;
 }
@@ -268,28 +224,30 @@ void manageDoctorSchedule () {
   int dayInWeek;
   int shiftInDay;
 
+  printf("\e[1;1H\e[2J");
   printf("\nEnter Doctor ID to assign shifts: ");
-  scanf("%d", &doctorID);
-  getchar();
+  doctorID = scanInt();
   int index = idExists(doctorIDs, totalDoctors, doctorID);
 
   if (doctorID < 0 || index == -1) {
     printf("The doctor ID is invalid or didn't exist!\n");
+    returnToMenu();
     return;
   } else if (totalDoctorShifts[index] >= 7) {
     printf("This doctor took enough shifts this week!\n");
+    returnToMenu();
     return;
   }
 
   do {
     printf("Enter day to assign shift (8 to exit session): ");
-    scanf("%d", &dayInWeek);
-    getchar();
+    dayInWeek = scanInt();
     if (dayInWeek < 1 || dayInWeek > 8) {
       printf("The days in week should be between 1 and 7! Try again.\n");
 
     } else if (dayInWeek == 8) {
       printf("Session ending...\n");
+      returnToMenu();
       return;
     } else {
       for (int i = 0; i < MAX_SHIFTS_IN_DAY; i++) {
@@ -305,14 +263,15 @@ void manageDoctorSchedule () {
       printf("This day's shifts have all been taken! Choose a different day.\n");
     }
   } while (dayInWeek != 8);
+  returnToMenu();
 }
 
 void assignShift(int index, int dayInWeek) {
   int shiftInDay;
+  printf("\e[1;1H\e[2J");
   do {
     printf("Enter shift to assign (1-morning, 2-afternoon, 3-evening)\n");
-    scanf("%d", &shiftInDay);
-    getchar();
+    shiftInDay = scanInt();
     if (shiftInDay < 1 || shiftInDay > 3) {
       printf("This shift is invalid! Try again\n");
     } else {
@@ -326,9 +285,11 @@ void assignShift(int index, int dayInWeek) {
         }
     }
   } while (shiftInDay < 1 || shiftInDay > 3);
+  returnToMenu();
 }
 
 void viewSchedule () {
+  printf("\e[1;1H\e[2J");
   printf("\nDoctor Schedule\n");
   for(int i = 0; i < MAX_DAYS_IN_WEEK; i++) {
     printf("Day %d:\t", i + 1);
@@ -341,6 +302,7 @@ void viewSchedule () {
     }
     printf("\n");
   }
+  returnToMenu();
 }
 
 void addDoctor () {
@@ -377,6 +339,7 @@ void addDoctor () {
 }
 
 void viewDoctors () {
+  printf("\e[1;1H\e[2J");
   printf("\nDoctor ID\tName\n");
   for(int i = 0; i < totalDoctors; i++) {
     printf("%d\t\t%s\n", doctorIDs[i], doctorNames[i]);
