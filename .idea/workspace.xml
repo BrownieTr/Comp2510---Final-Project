@@ -7,6 +7,7 @@
     <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
     <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppFormatterOtherPage" type="string" />
     <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="3" type="long" />
   </component>
@@ -21,7 +22,6 @@
   <component name="ChangeListManager">
     <list default="true" id="3f4e8696-852b-4d2e-9f6e-33bbed8097d5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HospitalManagementSystem.c" beforeDir="false" afterPath="$PROJECT_DIR$/HospitalManagementSystem.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +75,7 @@
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/tkngu/OneDrive/Documents/Canada/BCIT stuffs/CST matters/Term 2/COMP 2510/Final Project",
+    "last_opened_file_path": "C:/Users/tkngu/OneDrive/Documents/Canada/BCIT stuffs/CST matters/Term 2/COMP 2510/Labs/Lab 7",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -115,7 +115,8 @@
       <workItem from="1740083673006" duration="2683000" />
       <workItem from="1740769926592" duration="189000" />
       <workItem from="1741045655265" duration="106000" />
-      <workItem from="1742064710071" duration="998000" />
+      <workItem from="1742064710071" duration="1372000" />
+      <workItem from="1742160300735" duration="638000" />
     </task>
     <servers />
   </component>
