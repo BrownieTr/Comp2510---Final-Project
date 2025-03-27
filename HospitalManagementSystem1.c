@@ -51,7 +51,7 @@ void menu() {
   printf("\e[1;1H\e[2J");// Clear screen
   do {
     choice = 0;
-    printf("\n1. Add Patient record\n");
+    printf("1. Add Patient record\n");
     printf("2. View All Patients\n");
     printf("3. Search Patient\n");
     printf("4. Discharge Patient\n");
