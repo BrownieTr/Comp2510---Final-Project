@@ -18,15 +18,19 @@ Description: A simple C program to manage patient records and doctor schedules.
 #define MAX_CHAR_IN_NAME 50
 
 // Function prototypes
-void addPatientRecord();
-void viewPatientRecords();
-void searchPatientRecord();
-void dischargePatientRecord();
+void menu();
+void initializeLists();
+void addPatient();
+void viewPatients();
+void searchPatient();
+void dischargePatient();
 void manageDoctorSchedule();
 void assignShift(int index, int dayInWeek);
 void viewSchedule();
 void addDoctor();
 void viewDoctors();
+void searchDoctor();
+void dischargeDoctor();
 void clearInputBuffer();
 void returnToMenu();
 int scanInt();
@@ -54,14 +58,49 @@ struct  Doctor {
   struct Doctor* next;
 };
 
-// List to store patient records
-struct Patient *firstPatient = malloc(sizeof(struct Patient));
-struct Patient *currentPatient = firstPatient;
+// Generic Node structure
+struct Node {
+  int iD;
+    struct Node *next;
+};
+
+// Declare global pointers to hold the lists of patients and doctors
+struct Patient *firstPatient = NULL;
+struct Patient *currentPatient = NULL;
+struct Doctor *firstDoctor = NULL;
+struct Doctor *currentDoctor = NULL;
+
 
 // Lists to manage doctor schedules
 int doctorSchedule[MAX_DAYS_IN_WEEK][MAX_SHIFTS_IN_DAY]; // 1-3 = shift assigned, 0 = not assigned
-struct Doctor *firstDoctor = malloc(sizeof(struct Doctor));
-struct Doctor *currentDoctor = firstDoctor;
+
+// Main function.
+int main() {
+  // Initialize patient and doctor lists
+  initializeLists();
+
+  // Call the menu function
+  menu();
+  return 0;
+}
+
+// Function to initialize patient and doctor lists
+void initializeLists() {
+  // Dynamically allocate memory for the first patient and doctor
+  firstPatient = (struct Patient*)malloc(sizeof(struct Patient));
+  if (firstPatient == NULL) {
+    printf("Memory allocation failed for firstPatient\n");
+    exit(-1);
+  }
+  currentPatient = firstPatient;
+
+  firstDoctor = (struct Doctor*)malloc(sizeof(struct Doctor));
+  if (firstDoctor == NULL) {
+    printf("Memory allocation failed for firstDoctor\n");
+    exit(-1);
+  }
+  currentDoctor = firstDoctor;
+}
 
 // Main menu function
 void menu() {
@@ -77,56 +116,31 @@ void menu() {
     printf("6. View Doctor Schedule\n");
     printf("7. Add Doctor Record\n");
     printf("8. View All Doctors\n");
-    printf("9. Exit\n");
+    printf("9. Search Doctor\n");
+    printf("10. Delete Doctor\n");
+    printf("11. Exit\n");
     printf("Enter your choice: ");
     choice = scanInt();
 
     switch (choice) {
-      case 1: addPatientRecord(); break;
-      case 2: viewPatientRecords(); break;
-      case 3: searchPatientRecord(); break;
-      case 4: dischargePatientRecord(); break;
+      case 1: addPatient(); break;
+      case 2: viewPatients(); break;
+      case 3: searchPatient(); break;
+      case 4: dischargePatient(); break;
       case 5: manageDoctorSchedule(); break;
       case 6: viewSchedule(); break;
       case 7: addDoctor(); break;
       case 8: viewDoctors(); break;
-      case 9: printf("Exiting...\n"); freeList(1); freeList(2); break;
+      case 9: searchDoctor(); break;
+      case 10: dischargeDoctor();break;
+      case 11: printf("Exiting...\n"); freeList(1); freeList(2); break;
       default: printf("Invalid choice! Try again.\n");
     }
-  } while (choice != 9);
-}
-
-// Function to check if an ID exists in the LinkedList
-int idExists(const int id, const int type) {
-  validateType(type);
-  if (type == 2) {
-    const struct Doctor* temp = firstDoctor;
-  }
-  const struct Patient *temp = firstPatient;
-
-  while (temp != NULL) {
-    if (temp->iD == id) {
-      return 1;
-    }
-    temp = temp->next;
-  }
-  return -1; // Return -1 if not found
-}
-
-// Function to check if a room number is already occupied by two patients
-int roomNumExists(const int roomNum) {
-  const struct Patient *temp = firstPatient;
-  while (temp != NULL) {
-    if (temp->roomNum == roomNum) {
-      return 1;
-    }
-    temp = temp->next;
-  }
-  return -1; // Return -1 if the room is available
+  } while (choice != 11);
 }
 
 // Function to add a patient record
-void addPatientRecord () {
+void addPatient () {
   printf("\e[1;1H\e[2J");
 
   int patientID;
@@ -135,7 +149,7 @@ void addPatientRecord () {
   char patientDiag[250];
   int patientRoomNum;
 
-  printf("\nEnter the patient ID (positive number): ");
+  printf("Enter the patient ID (positive number): ");
   patientID = scanInt();
 
   if (patientID <= 0 || idExists(patientID, 1) != -1) {
@@ -169,6 +183,7 @@ void addPatientRecord () {
     returnToMenu();
     return;
   }
+  struct Patient* newPatient = (struct Patient*)malloc(sizeof(struct Patient)); // Allocate more memory for Patient
 
   // Store patient details in LinkedList
   currentPatient->iD =  patientID;
@@ -176,14 +191,14 @@ void addPatientRecord () {
   currentPatient->age = patientAge;
   strcpy(currentPatient->diagnosis, patientDiag);
   currentPatient->roomNum = patientRoomNum;
-  currentPatient = currentPatient->next;
+  currentPatient->next = newPatient;
 
   printf("Patient record added successfully!\n");
   returnToMenu();
 }
 
 // Function to view all patient records
-void viewPatientRecords () {
+void viewPatients () {
   struct Patient *temp = firstPatient;
   printf("\e[1;1H\e[2J");
   printf("%-10s%-15s%-10s%-15s%-10s\n","ID","Name","Age","Diagnosis","Room Number");
@@ -200,7 +215,7 @@ void viewPatientRecords () {
 }
 
 // Function to search and display a patient record
-void searchPatientRecord () {
+void searchPatient () {
   int patientID;
   struct Patient *temp = firstPatient;
 
@@ -231,61 +246,40 @@ void searchPatientRecord () {
 }
 
 // Function to remove patient record
-void dischargePatientRecord () {
-  // Removes a patient record from the system using the patient ID.
-  int foundPatientID = 0;
-  int patientIndex;
+void dischargePatient () {
   printf("\e[1;1H\e[2J");  // Clears the screen
 
   int patientID;
   printf("Enter the patient ID: ");
   patientID = scanInt();
 
-  // Locate the patient record
-  for(int i = 0; i < totalPatients; i++) {
-    if (patientIDs[i] == patientID) {
-      foundPatientID = 1;
-      patientIndex = i;
-      break;
-    }
-  }
-
-  if (foundPatientID == 0) {
-    printf("The patient is not found!\n");
-    return;
-  } else {
-    totalPatients--;  // Reduce patient count
-    // Shift all records after the removed patient forward in the array
-    for(int j = patientIndex; j < totalPatients; j++) {
-      patientIDs[j] = patientIDs[j+1];
-      strcpy(patientNames[j], patientNames[j+1]);
-      patientAges[j] = patientAges[j+1];
-      strcpy(patientDiagnosis[j], patientDiagnosis[j+1]);
-      patientRoomNums[j] = patientRoomNums[j+1];
-    }
-  }
-
-  printf("Patient removed!");
+  deleteNode(patientID, 1);
   returnToMenu();
-  return;
 }
 
 // Function to manage doctore schedule
 void manageDoctorSchedule () {
   // Assigns a shift to a doctor based on availability.
   int doctorID, dayInWeek;
+  struct Doctor *temp = firstDoctor;
 
   printf("\e[1;1H\e[2J");  // Clears the screen
-  printf("\nEnter Doctor ID to assign shifts: ");
+  printf("Enter Doctor ID to assign shifts: ");
   doctorID = scanInt();
 
-  int index = idExists(doctorIDs, totalDoctors, doctorID);
+  int id = idExists(doctorID, 2);
+  while (temp != NULL) {
+    if (temp->iD == id) {
+      break;
+    }
+    temp = temp->next;
+  }
 
-  if (doctorID < 0 || index == -1) {
+  if (doctorID < 0 || id == -1) {
     printf("The doctor ID is invalid or doesn't exist!\n");
     returnToMenu();
     return;
-  } else if (totalDoctorShifts[index] >= 7) {
+  } else if (temp->totalShift >= 7) {
     printf("This doctor has reached the maximum number of shifts this week!\n");
     returnToMenu();
     return;
@@ -305,7 +299,8 @@ void manageDoctorSchedule () {
       // Check if there is an available shift
       for (int i = 0; i < MAX_SHIFTS_IN_DAY; i++) {
         if (doctorSchedule[dayInWeek - 1][i] == 0) {
-          assignShift(index, dayInWeek);
+          assignShift(id, dayInWeek);
+          temp->totalShift++;
           dayInWeek = 8;  // Exit loop after assigning a shift
           break;
         }
@@ -321,7 +316,7 @@ void manageDoctorSchedule () {
 }
 
 // Function to assign shift to doctors
-void assignShift(int index, int dayInWeek) {
+void assignShift(int id, int dayInWeek) {
   // Assigns a specific shift (morning, afternoon, evening) to a doctor on a given day.
   int shiftInDay;
   printf("\e[1;1H\e[2J");
@@ -334,8 +329,7 @@ void assignShift(int index, int dayInWeek) {
       printf("Invalid shift! Try again.\n");
     } else {
       if (doctorSchedule[dayInWeek - 1][shiftInDay - 1] == 0) {
-        doctorSchedule[dayInWeek - 1][shiftInDay - 1] = index + 1;
-        totalDoctorShifts[index]++;
+        doctorSchedule[dayInWeek - 1][shiftInDay - 1] = id;
         printf("Shift assigned successfully!\n");
       } else {
         printf("This shift is already taken! Try again.\n");
@@ -349,9 +343,11 @@ void assignShift(int index, int dayInWeek) {
 
 // Function to view schedule
 void viewSchedule () {
+  struct Doctor *temp = firstDoctor;
+
   // Displays the schedule of all doctors for the week.
   printf("\e[1;1H\e[2J");
-  printf("\nDoctor Schedule\n");
+  printf("Doctor Schedule\n");
 
   for(int i = 0; i < MAX_DAYS_IN_WEEK; i++) {
     printf("Day %d:\t", i + 1);
@@ -360,7 +356,13 @@ void viewSchedule () {
       if (doctorSchedule[i][j] == 0) {
         printf("Shift %d: Not Assigned Yet\t", j + 1);
       } else {
-        printf("Shift %d: Doctor %s\t\t", j + 1, doctorNames[doctorSchedule[i][j] - 1]);
+        while (temp != NULL) {
+          if (temp->iD == doctorSchedule[i][j]) {
+            break;
+          }
+          temp = temp->next;
+        }
+        printf("Shift %d: Doctor %s\t\t", j + 1, temp->doctorName);
       }
     }
     printf("\n");
@@ -370,87 +372,182 @@ void viewSchedule () {
 
 // Function to add doctor
 void addDoctor () {
-  // Adds a new doctor record to the system.
   printf("\e[1;1H\e[2J");
-
-  if (totalDoctors >= MAX_DOCTORS) {
-    printf("Maximum number of doctors reached!\n");
-    returnToMenu();
-    return;
-  }
 
   int doctorID;
   char doctorName[50];
 
-  printf("Enter Doctor ID (positive number): ");
+  printf("\nEnter the doctor ID (positive number): ");
   doctorID = scanInt();
 
-  if (doctorID < 0 || idExists(doctorIDs, totalDoctors, doctorID) != -1) {
-    printf("The doctor ID is invalid or already exists!\n");
+  if (doctorID <= 0 || idExists(doctorID, 2) != -1) {
+    printf("The patient ID is invalid or already exists!\n");
     returnToMenu();
     return;
   }
 
   printf("Enter the doctor name: ");
   fgets(doctorName, sizeof(doctorName), stdin);
-  doctorName[strcspn(doctorName, "\n")] = 0;
+  doctorName[strcspn(doctorName, "\n")] = 0; // Remove newline character
+  struct Doctor *newDoctor = (struct Doctor *)malloc(sizeof(struct Doctor)); // Allocate more memory for Doctor
 
-  doctorIDs[totalDoctors] = doctorID;
-  strcpy(doctorNames[totalDoctors], doctorName);
-  totalDoctors++;
+  // Store doctor details in LinkedList
+  currentDoctor->iD =  doctorID;
+  strcpy(currentDoctor->doctorName, doctorName);
+  currentDoctor->totalShift = 0;
+  currentDoctor->next = newDoctor;
 
-  printf("Doctor record added successfully!\n");
+  printf("Patient record added successfully!\n");
   returnToMenu();
 }
 
 
 // Function to view all doctors
 void viewDoctors () {
-  // Displays a list of all registered doctors.
+  struct Doctor *temp = firstDoctor;
   printf("\e[1;1H\e[2J");
-  printf("\nDoctor ID\tName\n");
-
-  for(int i = 0; i < totalDoctors; i++) {
-    printf("%d\t\t%s\n", doctorIDs[i], doctorNames[i]);
+  printf("%-10s%-15s%-10s\n","ID","Name","TotalShift this week");
+  while (temp != NULL) {
+    printf("%-10d%-15s%-10d\n",
+      temp->iD,
+      temp->doctorName,
+      temp->totalShift);
+    temp = temp->next;
   }
-
   returnToMenu();
 }
 
-void deleteRecord(const int id, const int type) {
-  validateType(type);
-  if (type == 2) {
-    const struct Doctor* temp = firstDoctor;
-  }
-  const struct Patient *temp = currentPatient;
-  int found = 1;
+void searchDoctor() {
+  int doctorID;
+  struct Doctor *temp = firstDoctor;
 
+  printf("Enter the Doctor ID: \n");
+  doctorID = scanInt();
+
+  if (doctorID <= 0 || idExists(doctorID, 1) != -1) {
+    printf("The patient ID is invalid or already exists!\n");
+    returnToMenu();
+    return;
+  }
+
+  printf("\e[1;1H\e[2J");  // Clears the screen
   while (temp != NULL) {
-    if (temp->iD == id) {
-      free(temp);
-      found = 0;
+    if (temp->iD == doctorID) {
+      printf("%-10s%-15s%-10s%\n","ID","Name","Total Shift this week");
+      printf("%-10d%-15s%-10d%\n",
+        temp->iD,
+        temp->doctorName,
+        temp->totalShift);
       break;
     }
   }
-
-  if (found) {
-    printf("Record not found!\n");
-  } else {
-    printf("Record deleted successfully!\n");
-  }
+  printf("Doctor record not found!\n");
   returnToMenu();
+}
+
+void dischargeDoctor() {
+  printf("\e[1;1H\e[2J");  // Clears the screen
+
+  int doctorID;
+  printf("Enter the doctor ID: ");
+  doctorID = scanInt();
+
+  deleteNode(doctorID, 2);
+  returnToMenu();
+}
+
+// Function to check if an ID exists in the LinkedList
+int idExists(const int id, const int type) {
+  validateType(type);
+
+  if (id == 0) {
+    return -1;
+  }
+
+  if (type == 2) {  // Checking Doctor list
+    struct Doctor *temp = firstDoctor;
+    while (temp != NULL) {
+      if (temp->iD == id) {
+        return id;
+      }
+      temp = temp->next;
+    }
+  } else {  // Checking Patient list
+    struct Patient *temp = firstPatient;
+    while (temp != NULL) {
+      if (temp->iD == id) {
+        return id;
+      }
+      temp = temp->next;
+    }
+  }
+  return -1; // Not found
+}
+
+// Function to check if a room number is already occupied by two patients
+int roomNumExists(const int roomNum) {
+  const struct Patient *temp = firstPatient;
+  while (temp != NULL) {
+    if (temp->roomNum == roomNum) {
+      return 1;
+    }
+    temp = temp->next;
+  }
+  return -1; // Return -1 if the room is available
+}
+
+void deleteNode(const int id, const int type) {
+  validateType(type);
+
+  if (type == 2) {
+    struct Doctor* temp = firstDoctor;
+    struct Doctor* prevPtr = NULL;
+
+    while (temp != NULL) {
+      if (temp->iD == id) {
+        if (prevPtr == NULL) {
+          firstDoctor = temp->next;
+        } else {
+          prevPtr->next = temp->next;
+        }
+        free(temp);
+        printf("Doctor record deleted successfully.\n");
+        return;
+      }
+      prevPtr = temp;
+      temp = temp->next;
+    }
+  } else {
+    struct Patient* temp = currentPatient;
+    struct Patient* prevPtr = NULL;
+
+    while (temp != NULL) {
+      if (temp->iD == id) {
+        if (prevPtr == NULL) {
+          currentPatient = temp->next;
+        } else {
+          prevPtr->next = temp->next;
+        }
+        free(temp);
+        printf("Patient record deleted successfully.\n");
+        return;
+      }
+      prevPtr = temp;
+      temp = temp->next;
+    }
+  }
+
+  printf("Record with ID %d not found.\n", id);
 }
 
 void freeList(const int type) {
   validateType(type);
-  if (type == 2) {
-    const struct Doctor* temp = firstDoctor;
-  }
-  const struct Patient *temp = currentPatient;
+  struct Node *temp = (type == 2) ? (struct Node *)firstDoctor : (struct Node *)currentPatient;
 
   while (temp != NULL) {
-    temp = temp->next;
+    struct Node *next = temp->next;
     free(temp);
+    temp = next;
   }
 }
 
@@ -465,7 +562,6 @@ void validateType(int type) {
 void clearInputBuffer () {
   // Clears the input buffer to handle invalid input cases.
   while (getchar() != '\n') {}
-  return;
 }
 
 // Function to safely scans an integer input and handles invalid inputs.
@@ -486,11 +582,5 @@ void returnToMenu () {
   // Prompts the user to press Enter to return to the main menu.
   printf("Press enter to return to the menu\n");
   clearInputBuffer();
-  return;
-}
-
-// Main function.
-int main() {
-  menu(); // Call the menu function
-  return 0;
+  printf("\e[1;1H\e[2J");
 }
