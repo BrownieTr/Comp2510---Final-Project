@@ -30,10 +30,10 @@ int totalDoctorShifts[MAX_DOCTORS];
 int totalDoctors = 0;
 
 // Function prototypes
-void addPatientRecord();
-void viewPatientRecords();
-void searchPatientRecord();
-void dischargePatientRecord();
+void addPatient();
+void viewPatients();
+void searchPatient();
+void dischargePatient();
 void manageDoctorSchedule();
 void assignShift(int index, int dayInWeek);
 void viewSchedule();
@@ -64,10 +64,10 @@ void menu() {
     choice = scanInt();
 
     switch (choice) {
-      case 1: addPatientRecord(); break;
-      case 2: viewPatientRecords(); break;
-      case 3: searchPatientRecord(); break;
-      case 4: dischargePatientRecord(); break;
+      case 1: addPatient(); break;
+      case 2: viewPatients(); break;
+      case 3: searchPatient(); break;
+      case 4: dischargePatient(); break;
       case 5: manageDoctorSchedule(); break;
       case 6: viewSchedule(); break;
       case 7: addDoctor(); break;
@@ -103,7 +103,7 @@ int roomNumExists(int arr[], int size, int roomNum) {
 }
 
 // Function to add a patient record
-void addPatientRecord () {
+void addPatient () {
   printf("\e[1;1H\e[2J");
   if (totalPatients >= MAX_PATIENTS) {
     printf("Too many patients at the moment. Discharge one first!\n");
@@ -165,7 +165,7 @@ void addPatientRecord () {
 }
 
 // Function to view all patient records
-void viewPatientRecords () {
+void viewPatients () {
   printf("\e[1;1H\e[2J");
   printf("%-10s%-15s%-10s%-15s%-10s\n","ID","Name","Age","Diagnosis","Room Number");
   for(int i = 0; i < totalPatients; i++) {
@@ -175,7 +175,7 @@ void viewPatientRecords () {
 }
 
 // Function to search for patient record
-void searchPatientRecord () {
+void searchPatient () {
   // Searches for a patient record by ID and displays their details if found.
   int foundPatientID = 0;
   printf("\e[1;1H\e[2J");  // Clears the screen
@@ -202,7 +202,7 @@ void searchPatientRecord () {
 }
 
 // Function to remove patient record
-void dischargePatientRecord () {
+void dischargePatient () {
   // Removes a patient record from the system using the patient ID.
   int foundPatientID = 0;
   int patientIndex;
