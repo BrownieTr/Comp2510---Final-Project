@@ -70,9 +70,12 @@ struct Patient *currentPatient = NULL;
 struct Doctor *firstDoctor = NULL;
 struct Doctor *currentDoctor = NULL;
 
-
 // Lists to manage doctor schedules
-int doctorSchedule[MAX_DAYS_IN_WEEK][MAX_SHIFTS_IN_DAY]; // 1-3 = shift assigned, 0 = not assigned
+int doctorSchedule[MAX_DAYS_IN_WEEK][MAX_SHIFTS_IN_DAY]; // Has an id number = shift assigned, 0 = not assigned
+
+// Variable to warn if LinkedList is out of memory
+int lastPatient = 0;
+int lastDoctor = 0;
 
 // Main function.
 int main() {
@@ -191,7 +194,14 @@ void addPatient () {
   currentPatient->age = patientAge;
   strcpy(currentPatient->diagnosis, patientDiag);
   currentPatient->roomNum = patientRoomNum;
-  currentPatient->next = newPatient;
+  if (currentPatient->next != NULL) {
+    currentPatient = currentPatient->next;
+  } else {
+    currentPatient->next = newPatient;;
+    currentPatient = currentPatient->next;
+    currentPatient->next = NULL;
+  }
+
 
   printf("Patient record added successfully!\n");
   returnToMenu();
@@ -202,7 +212,7 @@ void viewPatients () {
   struct Patient *temp = firstPatient;
   printf("\e[1;1H\e[2J");
   printf("%-10s%-15s%-10s%-15s%-10s\n","ID","Name","Age","Diagnosis","Room Number");
-  while (temp != NULL) {
+  while (temp != NULL && temp != currentPatient) {
     printf("%-10d%-15s%-10d%-15s%-10d\n",
       temp->iD,
       temp->patientName,
@@ -222,8 +232,8 @@ void searchPatient () {
   printf("Enter the patient ID: \n");
   patientID = scanInt();
 
-  if (patientID <= 0 || idExists(patientID, 1) != -1) {
-    printf("The patient ID is invalid or already exists!\n");
+  if (patientID <= 0 || idExists(patientID, 1) == -1) {
+    printf("The patient ID is invalid or couldn't found!\n");
     returnToMenu();
     return;
   }
@@ -241,7 +251,6 @@ void searchPatient () {
       break;
     }
   }
-  printf("Patient record not found!\n");
   returnToMenu();
 }
 
@@ -377,7 +386,7 @@ void addDoctor () {
   int doctorID;
   char doctorName[50];
 
-  printf("\nEnter the doctor ID (positive number): ");
+  printf("Enter the doctor ID (positive number): ");
   doctorID = scanInt();
 
   if (doctorID <= 0 || idExists(doctorID, 2) != -1) {
@@ -395,7 +404,13 @@ void addDoctor () {
   currentDoctor->iD =  doctorID;
   strcpy(currentDoctor->doctorName, doctorName);
   currentDoctor->totalShift = 0;
-  currentDoctor->next = newDoctor;
+  if (currentDoctor->next != NULL) {
+    currentDoctor = currentDoctor->next;
+  } else {
+    currentDoctor->next = newDoctor;;
+    currentDoctor = currentDoctor->next;
+    currentDoctor->next = NULL;
+  }
 
   printf("Patient record added successfully!\n");
   returnToMenu();
@@ -407,7 +422,7 @@ void viewDoctors () {
   struct Doctor *temp = firstDoctor;
   printf("\e[1;1H\e[2J");
   printf("%-10s%-15s%-10s\n","ID","Name","TotalShift this week");
-  while (temp != NULL) {
+  while (temp != NULL && temp != currentDoctor) {
     printf("%-10d%-15s%-10d\n",
       temp->iD,
       temp->doctorName,

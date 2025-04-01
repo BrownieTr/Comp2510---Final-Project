@@ -20,8 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3f4e8696-852b-4d2e-9f6e-33bbed8097d5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HospitalManagementSystem1.c" beforeDir="false" afterPath="$PROJECT_DIR$/HospitalManagementSystem1.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HMS.exe" beforeDir="false" afterPath="$PROJECT_DIR$/HMS.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HospitalManagementSystem2.c" beforeDir="false" afterPath="$PROJECT_DIR$/HospitalManagementSystem2.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -62,6 +63,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "C/C++ File.HospitalManagementSystem.c.executor": "Run",
+    "C/C++ File.HospitalManagementSystem2.c.executor": "Run",
     "RunOnceActivity.RadMigrateCodeStyle": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
@@ -134,7 +136,8 @@
       <workItem from="1743110246544" duration="3635000" />
       <workItem from="1743195648775" duration="909000" />
       <workItem from="1743362141532" duration="242000" />
-      <workItem from="1743375252334" duration="6065000" />
+      <workItem from="1743375252334" duration="6541000" />
+      <workItem from="1743452964302" duration="3696000" />
     </task>
     <servers />
   </component>
