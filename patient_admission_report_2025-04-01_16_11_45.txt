@@ -1,0 +1,9 @@
+PATIENT ADMISSION REPORT
+Generated on: 2025-04-01_16_11_45
+
+Total Patients: 2
+
+ID        Name                     Age       Diagnosis                     Room Number    Admission Date      
+--------------------------------------------------------------------------------------------------------
+3         Davi                     30        Smart                         3              2025-04-01 16:10:13 
+2         Brownie                  18        ...                           2              2025-04-01 16:10:52 
