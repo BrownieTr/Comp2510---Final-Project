@@ -19,19 +19,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acb094fe-0b5e-4a36-814a-b75b46fbea13" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/HospitalManagementSystemCompleted.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/a.exe" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doctors.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/patient.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/patients.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/schedule.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HMS.exe" beforeDir="false" afterPath="$PROJECT_DIR$/HMS.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HospitalManagementSystem2.c" beforeDir="false" afterPath="$PROJECT_DIR$/HospitalManagementSystem2.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HospitalManagementSystem2.exe" beforeDir="false" afterPath="$PROJECT_DIR$/HospitalManagementSystem2.exe" afterDir="false" />
-    </list>
+    <list default="true" id="acb094fe-0b5e-4a36-814a-b75b46fbea13" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -51,7 +39,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "C/C++ File.Unnamed.executor": "Run",
-    "git-widget-placeholder": "Merging main",
+    "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",

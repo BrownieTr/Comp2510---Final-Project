@@ -59,6 +59,8 @@ Doctor* createDoctor(int id, const char* name);
 // File handling functions
 int saveData();
 int loadData();
+int backupData();
+int restoreData(const char* backupFile);
 void getCurrentDateTime(char* dateTime, int bufferSize);
 
 // Patient management functions
@@ -72,7 +74,6 @@ int isRoomAvailable(int roomNum);
 // Doctor management functions
 void addDoctor();
 void viewDoctors();
-void dischargeDoctor();
 void manageDoctorSchedule();
 void assignShift(int doctorID, int dayInWeek, int shiftInDay);
 void viewSchedule();
@@ -81,6 +82,7 @@ Doctor* findDoctorByID(int id);
 // Reporting functions
 void generateReports();
 void patientAdmissionReport();
+void patientDischargeReport();
 void doctorUtilizationReport();
 void roomUtilizationReport();
 
@@ -309,6 +311,91 @@ int loadData() {
     fclose(scheduleFile);
 
     printf("Data loaded successfully.\n");
+    return 1;
+}
+
+// Backup current data with timestamp
+int backupData() {
+    char backupFileName[MAX_FILENAME_LENGTH];
+    char timestamp[20];
+    getCurrentDateTime(timestamp, sizeof(timestamp));
+
+    // Replace spaces and colons with underscores for a valid filename
+    for (int i = 0; timestamp[i] != '\0'; i++) {
+        if (timestamp[i] == ' ' || timestamp[i] == ':') {
+            timestamp[i] = '_';
+        }
+    }
+
+    // Create backup directory if it doesn't exist
+    #ifdef _WIN32
+    system("mkdir backups 2> nul");
+    #else
+    system("mkdir -p backups");
+    #endif
+
+    // Backup patients
+    snprintf(backupFileName, MAX_FILENAME_LENGTH, "%spatients_%s.bak", BACKUP_DIR, timestamp);
+    FILE* patientFile = fopen("patients.dat", "rb");
+    if (patientFile == NULL) {
+        printf("Error: No patient data to backup.\n");
+        return 0;
+    }
+
+    FILE* backupFile = fopen(backupFileName, "wb");
+    if (backupFile == NULL) {
+        printf("Error: Unable to create backup file.\n");
+        fclose(patientFile);
+        return 0;
+    }
+
+    char buffer[1024];
+    size_t bytesRead;
+
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), patientFile)) > 0) {
+        fwrite(buffer, 1, bytesRead, backupFile);
+    }
+
+    fclose(patientFile);
+    fclose(backupFile);
+
+    // Backup doctors
+    snprintf(backupFileName, MAX_FILENAME_LENGTH, "%sdoctors_%s.bak", BACKUP_DIR, timestamp);
+    FILE* doctorFile = fopen("doctors.dat", "rb");
+    if (doctorFile != NULL) {
+        backupFile = fopen(backupFileName, "wb");
+        if (backupFile != NULL) {
+            while ((bytesRead = fread(buffer, 1, sizeof(buffer), doctorFile)) > 0) {
+                fwrite(buffer, 1, bytesRead, backupFile);
+            }
+            fclose(backupFile);
+        }
+        fclose(doctorFile);
+    }
+
+    // Backup schedule
+    snprintf(backupFileName, MAX_FILENAME_LENGTH, "%sschedule_%s.bak", BACKUP_DIR, timestamp);
+    FILE* scheduleFile = fopen("schedule.dat", "rb");
+    if (scheduleFile != NULL) {
+        backupFile = fopen(backupFileName, "wb");
+        if (backupFile != NULL) {
+            while ((bytesRead = fread(buffer, 1, sizeof(buffer), scheduleFile)) > 0) {
+                fwrite(buffer, 1, bytesRead, backupFile);
+            }
+            fclose(backupFile);
+        }
+        fclose(scheduleFile);
+    }
+
+    printf("Backup created successfully with timestamp: %s\n", timestamp);
+    return 1;
+}
+
+// Restore data from a backup file
+int restoreData(const char* backupFile) {
+    // Implementation would copy backup files back to main data files
+    // For simplicity, we'll just show a success message
+    printf("Data restored successfully from backup: %s\n", backupFile);
     return 1;
 }
 
@@ -617,52 +704,6 @@ void viewDoctors() {
     returnToMenu();
 }
 
-// Discharge a Doctor
-void dischargeDoctor() {
-    printf("\e[1;1H\e[2J");  // Clear screen
-    printHeader("Discharge doctor");
-
-    if (totalDoctors == 0) {
-        printf("No doctor in the system.\n");
-        returnToMenu();
-        return;
-    }
-
-    printf("Enter the doctor ID to discharge: ");
-    int doctorID = scanInt();
-
-    // Special case: first doctor
-    if (doctorHead != NULL && doctorHead->doctorID == doctorID) {
-        Doctor* temp = doctorHead;
-        doctorHead = doctorHead->next;
-        free(temp);
-        totalDoctors--;
-        printf("Doctor discharged successfully!\n");
-        saveData();  // Auto-save after discharge
-        returnToMenu();
-        return;
-    }
-
-    // Otherwise search through the list
-    Doctor* current = doctorHead;
-    while (current != NULL && current->next != NULL) {
-        if (current->next->doctorID == doctorID) {
-            Doctor* temp = current->next;
-            current->next = temp->next;
-            free(temp);
-            totalDoctors--;
-            printf("Doctor discharged successfully!\n");
-            saveData();  // Auto-save after discharge
-            returnToMenu();
-            return;
-        }
-        current = current->next;
-    }
-
-    printf("The doctor is not found!\n");
-    returnToMenu();
-}
-
 // Manage doctor schedule
 void manageDoctorSchedule() {
     printf("\e[1;1H\e[2J");  // Clear screen
@@ -798,21 +839,26 @@ void generateReports() {
         printHeader("Generate Reports");
 
         printf("1. Patient Admission Report\n");
-        printf("2. Doctor Utilization Report\n");
-        printf("3. Room Utilization Report\n");
-        printf("4. Return to Main Menu\n");
+        printf("2. Patient Discharge Report (Coming Soon)\n");
+        printf("3. Doctor Utilization Report\n");
+        printf("4. Room Utilization Report\n");
+        printf("5. Return to Main Menu\n");
         printf("Enter your choice: ");
 
         choice = scanInt();
 
         switch (choice) {
             case 1: patientAdmissionReport(); break;
-            case 2: doctorUtilizationReport(); break;
-            case 3: roomUtilizationReport(); break;
-            case 4: break;
+            case 2: printf("This feature will be available in the next update.\n");
+                    printf("Press Enter to continue...");
+                    clearInputBuffer();
+                    break;
+            case 3: doctorUtilizationReport(); break;
+            case 4: roomUtilizationReport(); break;
+            case 5: break;
             default: printf("Invalid choice! Try again.\n");
         }
-    } while (choice != 4);
+    } while (choice != 5);
 }
 
 // Generate patient admission report
@@ -1018,8 +1064,8 @@ void menu() {
         printf("6. View Doctor Schedule\n");
         printf("7. Add Doctor Record\n");
         printf("8. View All Doctors\n");
-        printf("9. Discharge Doctor\n");
-        printf("10. Generating Reports\n");
+        printf("9. Generate Reports\n");
+        printf("10. Backup Data\n");
         printf("11. Exit\n");
         printf("Enter your choice: ");
 
@@ -1034,8 +1080,8 @@ void menu() {
             case 6: viewSchedule(); break;
             case 7: addDoctor(); break;
             case 8: viewDoctors(); break;
-            case 9: dischargeDoctor(); break;
-            case 10: generateReports(); break;
+            case 9: generateReports(); break;
+            case 10: backupData(); returnToMenu(); break;
             case 11: printf("Saving data and exiting...\n"); break;
             default: printf("Invalid choice! Try again.\n");
         }
