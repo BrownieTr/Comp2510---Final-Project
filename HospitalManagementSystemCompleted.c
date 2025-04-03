@@ -85,7 +85,6 @@ Doctor* findDoctorByID(int id);
 // Reporting functions
 void generateReports();
 void patientAdmissionReport();
-void patientDischargeReport();
 void doctorUtilizationReport();
 void roomUtilizationReport();
 
@@ -974,99 +973,6 @@ Doctor* findDoctorByID(int id) {
     return NULL;
 }
 
-void patientDischargeReport() {
-    printf("\e[1;1H\e[2J");  // Clear screen
-    printHeader("Patient Discharge Report");
-
-    char searchDate[11];  // YYYY-MM-DD format (10 chars + null terminator)
-
-    printf("Enter date to search (YYYY-MM-DD): ");
-    scanf("%10s", searchDate);
-    clearInputBuffer();
-
-    // Validate date format (simple check)
-    if (strlen(searchDate) != 10 || searchDate[4] != '-' || searchDate[7] != '-') {
-        printf("Invalid date format! Please use YYYY-MM-DD format.\n");
-        printf("Press Enter to continue...");
-        clearInputBuffer();
-        return;
-    }
-
-    char reportFileName[MAX_FILENAME_LENGTH];
-    char timestamp[20];
-    getCurrentDateTime(timestamp, sizeof(timestamp));
-
-    // Replace spaces and colons with underscores for a valid filename
-    for (int i = 0; timestamp[i] != '\0'; i++) {
-        if (timestamp[i] == ' ' || timestamp[i] == ':') {
-            timestamp[i] = '_';
-        }
-    }
-
-    snprintf(reportFileName, MAX_FILENAME_LENGTH, "patient_discharge_report_%s.txt", timestamp);
-
-    FILE* reportFile = fopen(reportFileName, "w");
-    if (reportFile == NULL) {
-        printf("Error: Unable to create report file.\n");
-        printf("Press Enter to continue...");
-        clearInputBuffer();
-        return;
-    }
-
-    fprintf(reportFile, "PATIENT DISCHARGE REPORT\n");
-    fprintf(reportFile, "Generated on: %s\n", timestamp);
-    fprintf(reportFile, "Discharge Date: %s\n\n", searchDate);
-    fprintf(reportFile, "%-10s%-25s%-10s%-30s%-20s%-20s\n",
-            "ID", "Name", "Age", "Diagnosis", "Admission Date", "Discharge Date");
-    fprintf(reportFile, "------------------------------------------------------------------------------------------------------\n");
-
-    int count = 0;
-    Patient* current = patientHead;
-
-    // Print on screen too
-    printf("\nPatients discharged on %s:\n", searchDate);
-    printf("%-10s%-25s%-10s%-30s%-20s\n",
-            "ID", "Name", "Age", "Diagnosis", "Admission Date");
-    printf("-------------------------------------------------------------------------------------------\n");
-
-    while (current != NULL) {
-        // Check if this patient was discharged on the specified date
-        // Only compare the first 10 characters (YYYY-MM-DD part)
-        if (current->isActive == 0 && strncmp(current->dischargeDate, searchDate, 10) == 0) {
-            fprintf(reportFile, "%-10d%-25s%-10d%-30s%-20s%-20s\n",
-                   current->patientID,
-                   current->patientName,
-                   current->patientAge,
-                   current->patientDiagnosis,
-                   current->admissionDate,
-                   current->dischargeDate);
-
-            printf("%-10d%-25s%-10d%-30s%-20s\n",
-                   current->patientID,
-                   current->patientName,
-                   current->patientAge,
-                   current->patientDiagnosis,
-                   current->admissionDate);
-
-            count++;
-        }
-        current = current->next;
-    }
-
-    if (count == 0) {
-        fprintf(reportFile, "No patients were discharged on this date.\n");
-        printf("No patients were discharged on this date.\n");
-    } else {
-        fprintf(reportFile, "\nTotal patients discharged: %d\n", count);
-        printf("\nTotal patients discharged: %d\n", count);
-    }
-
-    fclose(reportFile);
-    printf("\nReport generated successfully: %s\n", reportFileName);
-    printf("Press Enter to continue...");
-    clearInputBuffer();
-}
-
 // Generate reports menu
 void generateReports() {
     int choice;
@@ -1076,23 +982,21 @@ void generateReports() {
         printHeader("Generate Reports");
 
         printf("1. Patient Admission Report\n");
-        printf("2. Patient Discharge Report\n");
-        printf("3. Doctor Utilization Report\n");
-        printf("4. Room Utilization Report\n");
-        printf("5. Return to Main Menu\n");
+        printf("2. Doctor Utilization Report\n");
+        printf("3. Room Utilization Report\n");
+        printf("4. Return to Main Menu\n");
         printf("Enter your choice: ");
 
         choice = scanInt();
 
         switch (choice) {
             case 1: patientAdmissionReport(); break;
-            case 2: patientDischargeReport(); break;
-            case 3: doctorUtilizationReport(); break;
-            case 4: roomUtilizationReport(); break;
-            case 5: break;
+            case 2: doctorUtilizationReport(); break;
+            case 3: roomUtilizationReport(); break;
+            case 4: break;
             default: printf("Invalid choice! Try again.\n");
         }
-    } while (choice != 5);
+    } while (choice != 4);
 }
 
 // Generate patient admission report
@@ -1131,19 +1035,20 @@ void patientAdmissionReport() {
     fprintf(reportFile, "PATIENT ADMISSION REPORT\n");
     fprintf(reportFile, "Generated on: %s\n\n", timestamp);
     fprintf(reportFile, "Total Patients: %d\n\n", totalPatients);
-    fprintf(reportFile, "%-10s%-25s%-10s%-30s%-15s%-20s\n",
-            "ID", "Name", "Age", "Diagnosis", "Room Number", "Admission Date");
-    fprintf(reportFile, "--------------------------------------------------------------------------------------------------------\n");
+    fprintf(reportFile, "%-10s%-25s%-10s%-30s%-15s%-25s%-10s\n",
+            "ID", "Name", "Age", "Diagnosis", "Room Number", "Admission Date", "Status");
+    fprintf(reportFile, "-------------------------------------------------------------------------------------------------------------------------\n");
 
     Patient* current = patientHead;
     while (current != NULL) {
-        fprintf(reportFile, "%-10d%-25s%-10d%-30s%-15d%-20s\n",
+        fprintf(reportFile, "%-10d%-25s%-10d%-30s%-15d%-25s%-10s\n",
                current->patientID,
                current->patientName,
                current->patientAge,
                current->patientDiagnosis,
                current->patientRoomNum,
-               current->admissionDate);
+               current->admissionDate,
+               current->isActive ? "Active" : "Discharged");
         current = current->next;
     }
 
@@ -1332,7 +1237,7 @@ void menu() {
             case 12: printf("Saving data and exiting...\n"); break;
             default: printf("Invalid choice! Try again.\n");
         }
-    } while (choice != 11);
+    } while (choice != 12);
 }
 
 // Clear the input buffer
