@@ -783,13 +783,13 @@ void viewSchedule() {
 
     printf("\nWeekly Schedule:\n");
     printf("-------------------------------------------------------------------------\n");
-    printf("Day\t| Morning\t| Afternoon\t| Evening\n");
+    printf("Day\t\t| Morning\t| Afternoon\t| Evening\n");
     printf("-------------------------------------------------------------------------\n");
 
     char* dayNames[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
     for (int i = 0; i < MAX_DAYS_IN_WEEK; i++) {
-        printf("%s\t|", dayNames[i]);
+        printf("%-10s\t|", dayNames[i]);
 
         for (int j = 0; j < MAX_SHIFTS_IN_DAY; j++) {
             int doctorIndex = doctorSchedule[i][j];
@@ -855,7 +855,7 @@ void generateReports() {
                     break;
             case 3: doctorUtilizationReport(); break;
             case 4: roomUtilizationReport(); break;
-            case 5: return;
+            case 5: break;
             default: printf("Invalid choice! Try again.\n");
         }
     } while (choice != 5);
