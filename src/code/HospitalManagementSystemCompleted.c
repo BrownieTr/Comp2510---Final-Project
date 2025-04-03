@@ -21,7 +21,6 @@ Description: Enhanced C program to manage patient records and doctor schedules.
 #define MAX_DAYS_IN_WEEK 7
 #define MAX_SHIFTS_IN_DAY 3
 #define MAX_FILENAME_LENGTH 100
-#define BACKUP_DIR "./backups/"
 
 // Structure for patient records using linked list
 typedef struct Patient {
@@ -183,7 +182,7 @@ Doctor* createDoctor(int id, const char* name) {
 
 // Save data to files
 int saveData() {
-    FILE* patientFile = fopen("patients.dat", "wb");
+    FILE* patientFile = fopen("../data/patients.dat", "wb");
     if (patientFile == NULL) {
         printf("Error: Unable to open patients.dat for writing.\n");
         return 0;
@@ -201,7 +200,7 @@ int saveData() {
     fclose(patientFile);
 
     // Save doctors
-    FILE* doctorFile = fopen("doctors.dat", "wb");
+    FILE* doctorFile = fopen("../data/doctors.dat", "wb");
     if (doctorFile == NULL) {
         printf("Error: Unable to open doctors.dat for writing.\n");
         return 0;
@@ -219,7 +218,7 @@ int saveData() {
     fclose(doctorFile);
 
     // Save schedule
-    FILE* scheduleFile = fopen("schedule.dat", "wb");
+    FILE* scheduleFile = fopen("../data/schedule.dat", "wb");
     if (scheduleFile == NULL) {
         printf("Error: Unable to open schedule.dat for writing.\n");
         return 0;
@@ -229,13 +228,14 @@ int saveData() {
     fclose(scheduleFile);
 
     printf("Data saved successfully.\n");
+    backupData();
     return 1;
 }
 
 // Load data from files
 int loadData() {
     // Load patients
-    FILE* patientFile = fopen("patients.dat", "rb");
+    FILE* patientFile = fopen("../data/patients.dat", "rb");
     if (patientFile == NULL) {
         printf("No existing patient data found. Starting with empty records.\n");
         return 0;
@@ -275,7 +275,7 @@ int loadData() {
     fclose(patientFile);
 
     // Load doctors
-    FILE* doctorFile = fopen("doctors.dat", "rb");
+    FILE* doctorFile = fopen("../data/doctors.dat", "rb");
     if (doctorFile == NULL) {
         printf("No existing doctor data found. Starting with empty records.\n");
         return 0;
@@ -307,7 +307,7 @@ int loadData() {
     fclose(doctorFile);
 
     // Load schedule
-    FILE* scheduleFile = fopen("schedule.dat", "rb");
+    FILE* scheduleFile = fopen("../data/schedule.dat", "rb");
     if (scheduleFile == NULL) {
         printf("No existing schedule data found. Starting with empty schedule.\n");
         return 0;
@@ -322,78 +322,66 @@ int loadData() {
 
 // Backup current data with timestamp
 int backupData() {
-    char backupFileName[MAX_FILENAME_LENGTH];
+    char reportFileName[MAX_FILENAME_LENGTH];
     char timestamp[20];
     getCurrentDateTime(timestamp, sizeof(timestamp));
-
     // Replace spaces and colons with underscores for a valid filename
     for (int i = 0; timestamp[i] != '\0'; i++) {
         if (timestamp[i] == ' ' || timestamp[i] == ':') {
             timestamp[i] = '_';
         }
     }
+    snprintf(reportFileName, MAX_FILENAME_LENGTH, "../backups/patients_%s.dat", timestamp);
 
-    // Create backup directory if it doesn't exist
-    #ifdef _WIN32
-    system("mkdir backups 2> nul");
-    #else
-    system("mkdir -p backups");
-    #endif
-
-    // Backup patients
-    snprintf(backupFileName, MAX_FILENAME_LENGTH, "%spatients_%s.bak", BACKUP_DIR, timestamp);
-    FILE* patientFile = fopen("patients.dat", "rb");
+    FILE* patientFile = fopen(reportFileName, "wb");
     if (patientFile == NULL) {
-        printf("Error: No patient data to backup.\n");
+        printf("Error: Unable to open patients backup file for writing.\n");
         return 0;
     }
 
-    FILE* backupFile = fopen(backupFileName, "wb");
-    if (backupFile == NULL) {
-        printf("Error: Unable to create backup file.\n");
-        fclose(patientFile);
-        return 0;
+    // Write total patients first
+    fwrite(&totalPatients, sizeof(int), 1, patientFile);
+
+    // Write each patient
+    Patient* current = patientHead;
+    while (current != NULL) {
+        fwrite(current, sizeof(Patient) - sizeof(Patient*), 1, patientFile);
+        current = current->next;
     }
-
-    char buffer[1024];
-    size_t bytesRead;
-
-    while ((bytesRead = fread(buffer, 1, sizeof(buffer), patientFile)) > 0) {
-        fwrite(buffer, 1, bytesRead, backupFile);
-    }
-
     fclose(patientFile);
-    fclose(backupFile);
 
-    // Backup doctors
-    snprintf(backupFileName, MAX_FILENAME_LENGTH, "%sdoctors_%s.bak", BACKUP_DIR, timestamp);
-    FILE* doctorFile = fopen("doctors.dat", "rb");
-    if (doctorFile != NULL) {
-        backupFile = fopen(backupFileName, "wb");
-        if (backupFile != NULL) {
-            while ((bytesRead = fread(buffer, 1, sizeof(buffer), doctorFile)) > 0) {
-                fwrite(buffer, 1, bytesRead, backupFile);
-            }
-            fclose(backupFile);
-        }
-        fclose(doctorFile);
+    snprintf(reportFileName, MAX_FILENAME_LENGTH, "../backups/doctors_%s.dat", timestamp);
+
+    // Save doctors
+    FILE* doctorFile = fopen(reportFileName, "wb");
+    if (doctorFile == NULL) {
+        printf("Error: Unable to open doctors backup file for writing.\n");
+        return 0;
     }
 
-    // Backup schedule
-    snprintf(backupFileName, MAX_FILENAME_LENGTH, "%sschedule_%s.bak", BACKUP_DIR, timestamp);
-    FILE* scheduleFile = fopen("schedule.dat", "rb");
-    if (scheduleFile != NULL) {
-        backupFile = fopen(backupFileName, "wb");
-        if (backupFile != NULL) {
-            while ((bytesRead = fread(buffer, 1, sizeof(buffer), scheduleFile)) > 0) {
-                fwrite(buffer, 1, bytesRead, backupFile);
-            }
-            fclose(backupFile);
-        }
-        fclose(scheduleFile);
+    // Write total doctors first
+    fwrite(&totalDoctors, sizeof(int), 1, doctorFile);
+
+    // Write each doctor
+    Doctor* currentDoc = doctorHead;
+    while (currentDoc != NULL) {
+        fwrite(currentDoc, sizeof(Doctor) - sizeof(Doctor*), 1, doctorFile);
+        currentDoc = currentDoc->next;
+    }
+    fclose(doctorFile);
+
+    snprintf(reportFileName, MAX_FILENAME_LENGTH, "../backups/schedule_%s.dat", timestamp);
+    // Save schedule
+    FILE* scheduleFile = fopen(reportFileName, "wb");
+    if (scheduleFile == NULL) {
+        printf("Error: Unable to open schedule backup file for writing.\n");
+        return 0;
     }
 
-    printf("Backup created successfully with timestamp: %s\n", timestamp);
+    fwrite(doctorSchedule, sizeof(doctorSchedule), 1, scheduleFile);
+    fclose(scheduleFile);
+
+    printf("Data back up successfully.\n");
     return 1;
 }
 
@@ -1204,9 +1192,8 @@ void menu() {
         printf("7. Add Doctor Record\n");
         printf("8. View All Doctors\n");
         printf("9. Generate Reports\n");
-        printf("10. Backup Data\n");
-        printf("11. Restore Data\n");
-        printf("12. Exit\n");
+        printf("10. Restore Data\n");
+        printf("11. Exit\n");
         printf("Enter your choice: ");
 
         choice = scanInt();
@@ -1221,8 +1208,7 @@ void menu() {
             case 7: addDoctor(); break;
             case 8: viewDoctors(); break;
             case 9: generateReports(); break;
-            case 10: backupData(); returnToMenu(); break;
-            case 11: {
+            case 10: {
                 printf("\e[1;1H\e[2J");  // Clear screen
                 printHeader("Restore Data from Backup");
                 char* timestamp = selectBackup();
@@ -1234,10 +1220,10 @@ void menu() {
                 returnToMenu();
                 break;
             }
-            case 12: printf("Saving data and exiting...\n"); break;
+            case 11: printf("Saving data and exiting...\n"); break;
             default: printf("Invalid choice! Try again.\n");
         }
-    } while (choice != 12);
+    } while (choice != 11);
 }
 
 // Clear the input buffer
