@@ -175,7 +175,6 @@ void menu() {
                 saveData();
                 freeList(1);
                 freeList(2);
-
                 break;
             default: printf("Invalid choice! Try again.\n");
         }
