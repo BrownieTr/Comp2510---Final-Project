@@ -1,0 +1,8 @@
+ROOM UTILIZATION REPORT
+Generated on: 2025-04-03_15_16_16
+
+Total Patients: 3
+
+Room Number    Patients       Occupancy %    
+------------------------------------------
+3              2              100.00         

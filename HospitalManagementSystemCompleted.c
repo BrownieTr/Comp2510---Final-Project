@@ -30,7 +30,9 @@ typedef struct Patient {
     int patientAge;
     char patientDiagnosis[250];
     int patientRoomNum;
-    char admissionDate[20];  // Added for reporting
+    char admissionDate[20];
+    char dischargeDate[20];
+    int isActive;
     struct Patient* next;
 } Patient;
 
@@ -61,6 +63,7 @@ int saveData();
 int loadData();
 int backupData();
 int restoreData(const char* backupFile);
+char* selectBackup();
 void getCurrentDateTime(char* dateTime, int bufferSize);
 
 // Patient management functions
@@ -154,6 +157,10 @@ Patient* createPatient(int id, const char* name, int age, const char* diagnosis,
 
     // Get current date for admission
     getCurrentDateTime(newPatient->admissionDate, sizeof(newPatient->admissionDate));
+
+    // Initialize new fields
+    newPatient->dischargeDate[0] = '\0';  // Empty string
+    newPatient->isActive = 1;             // Active by default
 
     newPatient->next = NULL;
     return newPatient;
@@ -391,12 +398,153 @@ int backupData() {
     return 1;
 }
 
-// Restore data from a backup file
-int restoreData(const char* backupFile) {
-    // Implementation would copy backup files back to main data files
-    // For simplicity, we'll just show a success message
-    printf("Data restored successfully from backup: %s\n", backupFile);
+// Restore data from a backup timestamp
+int restoreData(const char* timestamp) {
+    char backupFileName[MAX_FILENAME_LENGTH];
+    char buffer[1024];
+    size_t bytesRead;
+
+    // Restore patients
+    snprintf(backupFileName, MAX_FILENAME_LENGTH, "%spatients_%s.bak", BACKUP_DIR, timestamp);
+    FILE* backupFile = fopen(backupFileName, "rb");
+    if (backupFile == NULL) {
+        printf("Error: Cannot open backup file %s\n", backupFileName);
+        return 0;
+    }
+
+    FILE* patientFile = fopen("patients.dat", "wb");
+    if (patientFile == NULL) {
+        printf("Error: Unable to create patients.dat file.\n");
+        fclose(backupFile);
+        return 0;
+    }
+
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), backupFile)) > 0) {
+        fwrite(buffer, 1, bytesRead, patientFile);
+    }
+
+    fclose(backupFile);
+    fclose(patientFile);
+
+    // Restore doctors
+    snprintf(backupFileName, MAX_FILENAME_LENGTH, "%sdoctors_%s.bak", BACKUP_DIR, timestamp);
+    backupFile = fopen(backupFileName, "rb");
+    if (backupFile == NULL) {
+        printf("Warning: Cannot open doctors backup file.\n");
+    } else {
+        FILE* doctorFile = fopen("doctors.dat", "wb");
+        if (doctorFile != NULL) {
+            while ((bytesRead = fread(buffer, 1, sizeof(buffer), backupFile)) > 0) {
+                fwrite(buffer, 1, bytesRead, doctorFile);
+            }
+            fclose(doctorFile);
+        }
+        fclose(backupFile);
+    }
+
+    // Restore schedule
+    snprintf(backupFileName, MAX_FILENAME_LENGTH, "%sschedule_%s.bak", BACKUP_DIR, timestamp);
+    backupFile = fopen(backupFileName, "rb");
+    if (backupFile == NULL) {
+        printf("Warning: Cannot open schedule backup file.\n");
+    } else {
+        FILE* scheduleFile = fopen("schedule.dat", "wb");
+        if (scheduleFile != NULL) {
+            while ((bytesRead = fread(buffer, 1, sizeof(buffer), backupFile)) > 0) {
+                fwrite(buffer, 1, bytesRead, scheduleFile);
+            }
+            fclose(scheduleFile);
+        }
+        fclose(backupFile);
+    }
+
+    // Reload the restored data
+    cleanupSystem();  // Clean up current data
+    initializeSystem(); // Reinitialize
+    loadData();      // Load the restored data
+
+    printf("Data restored successfully from backup: %s\n", timestamp);
     return 1;
+}
+
+// List and select a backup to restore
+char* selectBackup() {
+    static char selectedTimestamp[30] = {0};
+    char fileList[1024] = {0};
+    char backupFiles[20][30]; // Store up to 20 backup timestamps
+    int backupCount = 0;
+
+    // Create command to list backup files
+    #ifdef _WIN32
+    char command[150] = "dir /b ";
+    strcat(command, BACKUP_DIR);
+    strcat(command, "patients_*.bak > temp_backups.txt");
+    #else
+    char command[150] = "ls -1 ";
+    strcat(command, BACKUP_DIR);
+    strcat(command, "patients_*.bak > temp_backups.txt");
+    #endif
+
+    // Execute command to list files
+    system(command);
+
+    // Open the temporary file with the list
+    FILE* fileListFile = fopen("temp_backups.txt", "r");
+    if (fileListFile == NULL) {
+        printf("No backups found or cannot access backup directory.\n");
+        return NULL;
+    }
+
+    printf("\nAvailable backups:\n");
+    printf("----------------\n");
+
+    // Parse the file names to extract timestamps
+    char line[MAX_FILENAME_LENGTH];
+    while (fgets(line, sizeof(line), fileListFile) && backupCount < 20) {
+        // Remove newline character if present
+        line[strcspn(line, "\n")] = 0;
+
+        // Extract timestamp from filename (patients_TIMESTAMP.bak)
+        char* prefix = strstr(line, "patients_");
+        if (prefix != NULL) {
+            char* timestamp = prefix + 9; // Skip "patients_"
+            char* extension = strstr(timestamp, ".bak");
+            if (extension != NULL) {
+                *extension = '\0'; // Terminate string at extension
+
+                // Store the timestamp
+                strncpy(backupFiles[backupCount], timestamp, sizeof(backupFiles[0]));
+
+                // Display with index
+                printf("%d. %s\n", backupCount + 1, timestamp);
+                backupCount++;
+            }
+        }
+    }
+
+    fclose(fileListFile);
+
+    // Clean up temporary file
+    remove("temp_backups.txt");
+
+    if (backupCount == 0) {
+        printf("No backups found.\n");
+        return NULL;
+    }
+
+    // Let user select a backup
+    int choice;
+    printf("\nEnter the number of the backup to restore (0 to cancel): ");
+    scanf("%d", &choice);
+    clearInputBuffer();
+
+    if (choice < 1 || choice > backupCount) {
+        return NULL;
+    }
+
+    // Return the selected timestamp
+    strcpy(selectedTimestamp, backupFiles[choice - 1]);
+    return selectedTimestamp;
 }
 
 // Get current date and time as string
@@ -498,18 +646,20 @@ void viewPatients() {
         return;
     }
 
-    printf("%-10s%-25s%-10s%-30s%-15s%-20s\n", "ID", "Name", "Age", "Diagnosis", "Room Number", "Admission Date");
-    printf("--------------------------------------------------------------------------------------------------------\n");
+    printf("%-10s%-25s%-10s%-30s%-15s%-30s%-10s\n",
+           "ID", "Name", "Age", "Diagnosis", "Room Number", "Admission Date", "Status");
+    printf("-------------------------------------------------------------------------------------------------------------------------------\n");
 
     Patient* current = patientHead;
     while (current != NULL) {
-        printf("%-10d%-25s%-10d%-30s%-15d%-20s\n",
+        printf("%-10d%-25s%-10d%-30s%-15d%-30s%-10s\n",
                current->patientID,
                current->patientName,
                current->patientAge,
                current->patientDiagnosis,
                current->patientRoomNum,
-               current->admissionDate);
+               current->admissionDate,
+               current->isActive ? "Active" : "Discharged");
         current = current->next;
     }
 
@@ -560,35 +710,29 @@ void dischargePatient() {
     printf("Enter the patient ID to discharge: ");
     patientID = scanInt();
 
-    // Special case: first patient
-    if (patientHead != NULL && patientHead->patientID == patientID) {
-        Patient* temp = patientHead;
-        patientHead = patientHead->next;
-        free(temp);
-        totalPatients--;
-        printf("Patient discharged successfully!\n");
-        saveData();  // Auto-save after discharge
+    Patient* patient = findPatientByID(patientID);
+
+    if (patient == NULL) {
+        printf("The patient is not found!\n");
         returnToMenu();
         return;
     }
 
-    // Otherwise search through the list
-    Patient* current = patientHead;
-    while (current != NULL && current->next != NULL) {
-        if (current->next->patientID == patientID) {
-            Patient* temp = current->next;
-            current->next = temp->next;
-            free(temp);
-            totalPatients--;
-            printf("Patient discharged successfully!\n");
-            saveData();  // Auto-save after discharge
-            returnToMenu();
-            return;
-        }
-        current = current->next;
+    if (patient->isActive == 0) {
+        printf("This patient has already been discharged!\n");
+        returnToMenu();
+        return;
     }
 
-    printf("The patient is not found!\n");
+    // Record discharge date
+    getCurrentDateTime(patient->dischargeDate, sizeof(patient->dischargeDate));
+    patient->isActive = 0;
+
+    // Update room availability by setting room to 0
+    patient->patientRoomNum = 0;
+
+    printf("Patient discharged successfully!\n");
+    saveData();  // Auto-save after discharge
     returnToMenu();
 }
 
@@ -830,6 +974,99 @@ Doctor* findDoctorByID(int id) {
     return NULL;
 }
 
+void patientDischargeReport() {
+    printf("\e[1;1H\e[2J");  // Clear screen
+    printHeader("Patient Discharge Report");
+
+    char searchDate[11];  // YYYY-MM-DD format (10 chars + null terminator)
+
+    printf("Enter date to search (YYYY-MM-DD): ");
+    scanf("%10s", searchDate);
+    clearInputBuffer();
+
+    // Validate date format (simple check)
+    if (strlen(searchDate) != 10 || searchDate[4] != '-' || searchDate[7] != '-') {
+        printf("Invalid date format! Please use YYYY-MM-DD format.\n");
+        printf("Press Enter to continue...");
+        clearInputBuffer();
+        return;
+    }
+
+    char reportFileName[MAX_FILENAME_LENGTH];
+    char timestamp[20];
+    getCurrentDateTime(timestamp, sizeof(timestamp));
+
+    // Replace spaces and colons with underscores for a valid filename
+    for (int i = 0; timestamp[i] != '\0'; i++) {
+        if (timestamp[i] == ' ' || timestamp[i] == ':') {
+            timestamp[i] = '_';
+        }
+    }
+
+    snprintf(reportFileName, MAX_FILENAME_LENGTH, "patient_discharge_report_%s.txt", timestamp);
+
+    FILE* reportFile = fopen(reportFileName, "w");
+    if (reportFile == NULL) {
+        printf("Error: Unable to create report file.\n");
+        printf("Press Enter to continue...");
+        clearInputBuffer();
+        return;
+    }
+
+    fprintf(reportFile, "PATIENT DISCHARGE REPORT\n");
+    fprintf(reportFile, "Generated on: %s\n", timestamp);
+    fprintf(reportFile, "Discharge Date: %s\n\n", searchDate);
+    fprintf(reportFile, "%-10s%-25s%-10s%-30s%-20s%-20s\n",
+            "ID", "Name", "Age", "Diagnosis", "Admission Date", "Discharge Date");
+    fprintf(reportFile, "------------------------------------------------------------------------------------------------------\n");
+
+    int count = 0;
+    Patient* current = patientHead;
+
+    // Print on screen too
+    printf("\nPatients discharged on %s:\n", searchDate);
+    printf("%-10s%-25s%-10s%-30s%-20s\n",
+            "ID", "Name", "Age", "Diagnosis", "Admission Date");
+    printf("-------------------------------------------------------------------------------------------\n");
+
+    while (current != NULL) {
+        // Check if this patient was discharged on the specified date
+        // Only compare the first 10 characters (YYYY-MM-DD part)
+        if (current->isActive == 0 && strncmp(current->dischargeDate, searchDate, 10) == 0) {
+            fprintf(reportFile, "%-10d%-25s%-10d%-30s%-20s%-20s\n",
+                   current->patientID,
+                   current->patientName,
+                   current->patientAge,
+                   current->patientDiagnosis,
+                   current->admissionDate,
+                   current->dischargeDate);
+
+            printf("%-10d%-25s%-10d%-30s%-20s\n",
+                   current->patientID,
+                   current->patientName,
+                   current->patientAge,
+                   current->patientDiagnosis,
+                   current->admissionDate);
+
+            count++;
+        }
+        current = current->next;
+    }
+
+    if (count == 0) {
+        fprintf(reportFile, "No patients were discharged on this date.\n");
+        printf("No patients were discharged on this date.\n");
+    } else {
+        fprintf(reportFile, "\nTotal patients discharged: %d\n", count);
+        printf("\nTotal patients discharged: %d\n", count);
+    }
+
+    fclose(reportFile);
+    printf("\nReport generated successfully: %s\n", reportFileName);
+    printf("Press Enter to continue...");
+    clearInputBuffer();
+}
+
 // Generate reports menu
 void generateReports() {
     int choice;
@@ -839,7 +1076,7 @@ void generateReports() {
         printHeader("Generate Reports");
 
         printf("1. Patient Admission Report\n");
-        printf("2. Patient Discharge Report (Coming Soon)\n");
+        printf("2. Patient Discharge Report\n");
         printf("3. Doctor Utilization Report\n");
         printf("4. Room Utilization Report\n");
         printf("5. Return to Main Menu\n");
@@ -849,10 +1086,7 @@ void generateReports() {
 
         switch (choice) {
             case 1: patientAdmissionReport(); break;
-            case 2: printf("This feature will be available in the next update.\n");
-                    printf("Press Enter to continue...");
-                    clearInputBuffer();
-                    break;
+            case 2: patientDischargeReport(); break;
             case 3: doctorUtilizationReport(); break;
             case 4: roomUtilizationReport(); break;
             case 5: break;
@@ -1066,7 +1300,8 @@ void menu() {
         printf("8. View All Doctors\n");
         printf("9. Generate Reports\n");
         printf("10. Backup Data\n");
-        printf("11. Exit\n");
+        printf("11. Restore Data\n");
+        printf("12. Exit\n");
         printf("Enter your choice: ");
 
         choice = scanInt();
@@ -1082,7 +1317,19 @@ void menu() {
             case 8: viewDoctors(); break;
             case 9: generateReports(); break;
             case 10: backupData(); returnToMenu(); break;
-            case 11: printf("Saving data and exiting...\n"); break;
+            case 11: {
+                printf("\e[1;1H\e[2J");  // Clear screen
+                printHeader("Restore Data from Backup");
+                char* timestamp = selectBackup();
+                if (timestamp != NULL) {
+                    restoreData(timestamp);
+                } else {
+                    printf("Restore operation cancelled.\n");
+                }
+                returnToMenu();
+                break;
+            }
+            case 12: printf("Saving data and exiting...\n"); break;
             default: printf("Invalid choice! Try again.\n");
         }
     } while (choice != 11);
