@@ -1,9 +1,16 @@
 /*
-Hospital Management System
-Author: Brownie Tran
-Author: Raymond Yang
-Date: 2025-02-11
-Description: A simple C program to manage patient records and doctor schedules.
+Hospital Management System - Phase 2
+Authors: Brownie Tran
+         Raymond Yang
+Date: 2025-04-01
+Description: Enhanced C program to manage patient records and doctor schedules.
+             This version includes:
+
+Dynamic memory allocation
+File handling for data persistence
+Linked lists for efficient data management
+Reporting and analytics
+Advanced error handling
 */
 
 #include <stdio.h>
