@@ -17,7 +17,7 @@ typedef struct Patient {
     int patientAge;                 // Patient's age
     char patientDiagnosis[250];     // Medical diagnosis details
     int patientRoomNum;             // Room number assigned to patient
-    char admissionDate[20]; git         // Date and time of admission
+    char admissionDate[20];         // Date and time of admission
     char dischargeDate[20];         // Date and time of discharge (if applicable)
     int isActive;                   // Flag to indicate if patient is currently admitted (1) or discharged (0)
     struct Patient *next;           // Pointer to next patient in linked list
