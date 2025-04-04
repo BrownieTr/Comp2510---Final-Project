@@ -7,6 +7,7 @@
     <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
     <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppFormatterOtherPage" type="string" />
     <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="3" type="long" />
   </component>
@@ -20,25 +21,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="acb094fe-0b5e-4a36-814a-b75b46fbea13" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/data/doctors.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/data/patients.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reports/doctor_utilization_report_2025-04-03_15_16_14.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reports/patient_admission_report_2025-04-03_15_15_56.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reports/room_utilization_report_2025-04-03_15_16_16.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HMS.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/HospitalManagementSystem1.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/code/HospitalManagementSystem1.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HospitalManagementSystem2.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/code/HospitalManagementSystem2.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HospitalManagementSystemCompleted.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/code/HospitalManagementSystemCompleted.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HospitalManagementSystemCompleted.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/doctor_utilization_report_2025-04-01_16_22_35.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/reports/doctor_utilization_report_2025-04-01_16_22_35.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/doctors.dat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/patient.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/patient_admission_report_2025-04-01_16_11_45.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/reports/patient_admission_report_2025-04-01_16_11_45.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/patients.dat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/room_utilization_report_2025-04-01_16_11_56.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/reports/room_utilization_report_2025-04-01_16_11_56.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schedule.dat" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/schedule.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/code/HospitalManagementSystemCompleted.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/code/HospitalManagementSystemCompleted.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,10 +49,9 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/src/code/HospitalManagementSystem1.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/code/HospitalManagementSystem1.c" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/code/HospitalManagementSystem2.c" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/code/HospitalManagementSystemCompleted.c" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../Labs/Lab 5/LMS.c" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -79,6 +63,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "C/C++ File.HospitalManagementSystemCompleted.c.executor": "Run",
     "C/C++ File.Unnamed.executor": "Run",
     "RunOnceActivity.RadMigrateCodeStyle": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -87,7 +72,7 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "Merging main",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -97,7 +82,13 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected="C/C++ File.HospitalManagementSystemCompleted.c">
+    <configuration name="HospitalManagementSystemCompleted.c" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Comp2510---Final-Project" TARGET_NAME="HospitalManagementSystemCompleted.c" CONFIG_NAME="HospitalManagementSystemCompleted.c">
+      <option name="sourceFile" value="src\code\HospitalManagementSystemCompleted.c" />
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Unnamed" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Final Project" TARGET_NAME="Unnamed" CONFIG_NAME="Unnamed">
       <option name="sourceFile" value="HospitalManagementSystemCompleted.c" />
       <method v="2">
@@ -118,6 +109,9 @@
       <workItem from="1743715364293" duration="15000" />
       <workItem from="1743715474543" duration="432000" />
       <workItem from="1743716294738" duration="2551000" />
+      <workItem from="1743721439530" duration="5476000" />
+      <workItem from="1743726987429" duration="4509000" />
+      <workItem from="1743794518553" duration="4872000" />
     </task>
     <servers />
   </component>
