@@ -20,13 +20,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acb094fe-0b5e-4a36-814a-b75b46fbea13" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/patient_admission_report_2025-04-03_15_55_27.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/patient_admission_report_2025-04-03_15_56_11.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/patient_admission_report_2025-04-03_15_57_04.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/reports/patient_admission_report_2025-04-03_15_57_04.txt" afterDir="false" />
-    </list>
+    <list default="true" id="acb094fe-0b5e-4a36-814a-b75b46fbea13" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -113,22 +107,11 @@
       <workItem from="1743715364293" duration="15000" />
       <workItem from="1743715474543" duration="432000" />
       <workItem from="1743716294738" duration="2551000" />
-      <workItem from="1743803643313" duration="864000" />
+      <workItem from="1743803643313" duration="1147000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/code/HospitalManagementSystemCompleted.c</url>
-          <line>14</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
