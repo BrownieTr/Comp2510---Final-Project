@@ -1,9 +1,0 @@
-DOCTOR UTILIZATION REPORT
-Generated on: 2025-04-03_15_16_14
-
-Total Doctors: 2
-
-ID        Name                     Total Shifts   Utilization %  
---------------------------------------------------------------------
-1         John                     1              4.76           
-2         Mary                     1              4.76           

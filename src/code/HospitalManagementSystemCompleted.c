@@ -1317,7 +1317,7 @@ void patientAdmissionReport() {
         }
     }
 
-    snprintf(reportFileName, MAX_FILENAME_LENGTH, "patient_admission_report_%s.txt", timestamp);
+    snprintf(reportFileName, MAX_FILENAME_LENGTH, "../reports/patient_admission_report_%s.txt", timestamp);
 
     FILE *reportFile = fopen(reportFileName, "w");
     if (reportFile == NULL) {
@@ -1378,7 +1378,7 @@ void doctorUtilizationReport() {
         }
     }
 
-    snprintf(reportFileName, MAX_FILENAME_LENGTH, "doctor_utilization_report_%s.txt", timestamp);
+    snprintf(reportFileName, MAX_FILENAME_LENGTH, "../reports/doctor_utilization_report_%s.txt", timestamp);
 
     FILE *reportFile = fopen(reportFileName, "w");
     if (reportFile == NULL) {
@@ -1449,7 +1449,7 @@ void roomUtilizationReport() {
         }
     }
 
-    snprintf(reportFileName, MAX_FILENAME_LENGTH, "room_utilization_report_%s.txt", timestamp);
+    snprintf(reportFileName, MAX_FILENAME_LENGTH, "../reports/room_utilization_report_%s.txt", timestamp);
 
     FILE *reportFile = fopen(reportFileName, "w");
     if (reportFile == NULL) {
@@ -1544,7 +1544,9 @@ void menu() {
                 returnToMenu();
                 break;
             }
-            case 11: printf("Saving data and exiting...\n");
+            case 11:
+                saveData();
+                printf("Exiting...");
                 break;
             default: printf("Invalid choice! Try again.\n");
         }
