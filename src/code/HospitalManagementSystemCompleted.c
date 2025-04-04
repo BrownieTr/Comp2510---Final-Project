@@ -260,6 +260,7 @@ int saveData() {
 }
 
 // Load data from files
+// Load data from files
 int loadData() {
     // Load patients
     FILE *patientFile = fopen("../data/patients.dat", "rb");
@@ -288,6 +289,10 @@ int loadData() {
         // Copy admission date
         strncpy(newPatient->admissionDate, tempPatient.admissionDate, sizeof(newPatient->admissionDate));
 
+        // Add the missing fields - Copy discharge date and isActive status
+        strncpy(newPatient->dischargeDate, tempPatient.dischargeDate, sizeof(newPatient->dischargeDate));
+        newPatient->isActive = tempPatient.isActive;
+
         // Add to linked list
         if (patientHead == NULL) {
             patientHead = newPatient;
@@ -300,6 +305,8 @@ int loadData() {
         }
     }
     fclose(patientFile);
+
+    /* Rest of the function remains unchanged */
 
     // Load doctors
     FILE *doctorFile = fopen("../data/doctors.dat", "rb");
