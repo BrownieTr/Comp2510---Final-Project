@@ -195,6 +195,7 @@ int saveData() {
 
     // Write total number of patients
     fwrite(&totalPatientsActive, sizeof(int), 1, patientFile);
+    fwrite(&totalPatients, sizeof(int), 1, patientFile);
 
     // Write each patient's data (excluding the next pointer)
     Patient *current = patientHead;
@@ -252,6 +253,7 @@ int loadData() {
 
     // Read total number of patients
     fread(&totalPatientsActive, sizeof(int), 1, patientFile);
+    fread(&totalPatients, sizeof(int), 1, patientFile);
 
     // Read and recreate each patient record
     Patient tempPatient;
