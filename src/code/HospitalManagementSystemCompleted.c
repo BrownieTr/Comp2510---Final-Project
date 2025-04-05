@@ -72,7 +72,6 @@ int isRoomAvailable(int roomNum);
 void addDoctor();
 void viewDoctors();
 void manageDoctorSchedule();
-void assignShift(int doctorID, int dayInWeek, int shiftInDay);
 void viewSchedule();
 Doctor *findDoctorByID(int id);
 void generateReports();
@@ -1541,24 +1540,15 @@ void menu() {
 
         // Process user choice
         switch (choice) {
-            case 1: addPatient();
-                break;
-            case 2: viewPatients();
-                break;
-            case 3: searchPatient();
-                break;
-            case 4: dischargePatient();
-                break;
-            case 5: manageDoctorSchedule();
-                break;
-            case 6: viewSchedule();
-                break;
-            case 7: addDoctor();
-                break;
-            case 8: viewDoctors();
-                break;
-            case 9: generateReports();
-                break;
+            case 1: addPatient(); break;
+            case 2: viewPatients(); break;
+            case 3: searchPatient(); break;
+            case 4: dischargePatient(); break;
+            case 5: manageDoctorSchedule(); break;
+            case 6: viewSchedule(); break;
+            case 7: addDoctor(); break;
+            case 8: viewDoctors(); break;
+            case 9: generateReports();break;
             case 10: {
                 printf("\e[1;1H\e[2J");  // Clear the screen
                 printHeader("Restore Data from Backup");
@@ -1579,10 +1569,7 @@ void menu() {
                 returnToMenu();
                 break;
             }
-            case 11:
-                saveData();
-                printf("Exiting...");
-                break;
+            case 11: printf("Exiting..."); break;
             default: printf("Invalid choice! Try again.\n");
         }
     } while (choice != 11);
