@@ -47,7 +47,8 @@ typedef struct Doctor {
 /* Global variables */
 Patient *patientHead = NULL;                                // Head of patient linked list
 Doctor *doctorHead = NULL;                                  // Head of doctor linked list
-int totalPatients = 0;                                      // Total number of patients in the system
+int totalPatientsActive = 0;                                // Total number of patients active in the system
+int totalPatients = 0;                                      // Total number of patients ever admitted in the system
 int totalDoctors = 0;                                       // Total number of doctors in the system
 int doctorSchedule[MAX_DAYS_IN_WEEK][MAX_SHIFTS_IN_DAY];    // 2D array to store weekly doctor schedule
 
@@ -194,7 +195,7 @@ int saveData() {
     }
 
     // Write total number of patients
-    fwrite(&totalPatients, sizeof(int), 1, patientFile);
+    fwrite(&totalPatientsActive, sizeof(int), 1, patientFile);
 
     // Write each patient's data (excluding the next pointer)
     Patient *current = patientHead;
@@ -251,11 +252,11 @@ int loadData() {
     }
 
     // Read total number of patients
-    fread(&totalPatients, sizeof(int), 1, patientFile);
+    fread(&totalPatientsActive, sizeof(int), 1, patientFile);
 
     // Read and recreate each patient record
     Patient tempPatient;
-    for (int i = 0; i < totalPatients; i++) {
+    for (int i = 0; i < totalPatientsActive; i++) {
         fread(&tempPatient, sizeof(Patient) - sizeof(Patient *), 1, patientFile);
 
         // Create a new patient with the basic information
@@ -359,7 +360,7 @@ int backupData() {
     }
 
     // Write total number of patients
-    fwrite(&totalPatients, sizeof(int), 1, patientFile);
+    fwrite(&totalPatientsActive, sizeof(int), 1, patientFile);
 
     // Write each patient's data (excluding the next pointer)
     Patient *current = patientHead;
@@ -552,7 +553,7 @@ int safeLoadData() {
     printf("Starting safe data loading...\n");
 
     // Reset counters and list heads
-    totalPatients = 0;
+    totalPatientsActive = 0;
     totalDoctors = 0;
 
     patientHead = NULL;
@@ -628,12 +629,12 @@ int safeLoadData() {
             current->next = newPatient;
         }
 
-        totalPatients++;
+        totalPatientsActive++;
         printf("Loaded patient ID: %d\n", newPatient->patientID);
     }
     fclose(patientFile);
 
-    printf("Successfully loaded %d patients.\n", totalPatients);
+    printf("Successfully loaded %d patients.\n", totalPatientsActive);
 
     // Load doctor data
     FILE *doctorFile = fopen("../data/doctors.dat", "rb");
@@ -717,7 +718,7 @@ int safeLoadData() {
     }
 
     // Return success if any data was loaded
-    return (totalPatients > 0 || totalDoctors > 0);
+    return (totalPatientsActive > 0 || totalDoctors > 0);
 }
 
 //Select a backup to restore. Lists available backups and prompts the user to select one
@@ -906,6 +907,7 @@ void addPatient() {
         current->next = newPatient;
     }
 
+    totalPatientsActive++;
     totalPatients++;
     printf("Patient record added successfully!\n");
 
@@ -921,7 +923,7 @@ void viewPatients() {
     printf("\e[1;1H\e[2J");  // Clear the screen
     printHeader("View All Patients");
 
-    if (totalPatients == 0) {
+    if (totalPatientsActive == 0) {
         printf("No patients in the system.\n");
         returnToMenu();
         return;
@@ -988,7 +990,7 @@ void dischargePatient() {
     printf("\e[1;1H\e[2J");  // Clear the screen
     printHeader("Discharge Patient");
 
-    if (totalPatients == 0) {
+    if (totalPatientsActive == 0) {
         printf("No patients in the system.\n");
         returnToMenu();
         return;
@@ -1017,6 +1019,7 @@ void dischargePatient() {
     // Set discharge date and mark as inactive
     getCurrentDateTime(patient->dischargeDate, sizeof(patient->dischargeDate));
     patient->isActive = 0;
+    totalPatientsActive--;
 
     // Free up the room
     patient->patientRoomNum = 0;
@@ -1313,7 +1316,7 @@ void patientAdmissionReport() {
     printf("\e[1;1H\e[2J");  // Clear the screen
     printHeader("Patient Admission Report");
 
-    if (totalPatients == 0) {
+    if (totalPatientsActive == 0) {
         printf("No patients in the system.\n");
         printf("Press Enter to continue...");
         clearInputBuffer();
@@ -1444,7 +1447,7 @@ void roomUtilizationReport() {
     printf("\e[1;1H\e[2J");  // Clear the screen
     printHeader("Room Utilization Report");
 
-    if (totalPatients == 0) {
+    if (totalPatientsActive == 0) {
         printf("No patients in the system.\n");
         printf("Press Enter to continue...");
         clearInputBuffer();
@@ -1490,7 +1493,7 @@ void roomUtilizationReport() {
     // Write report header
     fprintf(reportFile, "ROOM UTILIZATION REPORT\n");
     fprintf(reportFile, "Generated on: %s\n\n", timestamp);
-    fprintf(reportFile, "Total Patients: %d\n\n", totalPatients);
+    fprintf(reportFile, "Total Patients: %d\n\n", totalPatientsActive);
     fprintf(reportFile, "%-15s%-15s%-15s\n",
             "Room Number", "Patients", "Occupancy %");
     fprintf(reportFile, "------------------------------------------\n");
