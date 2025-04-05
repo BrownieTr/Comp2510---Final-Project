@@ -1,0 +1,10 @@
+PATIENT ADMISSION REPORT
+Generated on: 2025-04-05_00_58_12
+
+Total Patients: 3
+
+ID        Name                     Age       Diagnosis                     Room Number    Admission Date           Status    
+-------------------------------------------------------------------------------------------------------------------------
+1         John                     30        non                           1              2025-04-05 00:54:26      Active    
+2         Marry                    20        non                           0              2025-04-05 00:55:15      Discharged
+3         Larry                    15        non                           2              2025-04-05 00:55:33      Active    
