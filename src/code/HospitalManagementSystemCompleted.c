@@ -73,6 +73,7 @@ int isRoomAvailable(int roomNum);
 void addDoctor();
 void viewDoctors();
 void manageDoctorSchedule();
+void assignShift(int doctorID, int dayInWeek, int shiftInDay);
 void viewSchedule();
 Doctor *findDoctorByID(int id);
 void generateReports();
@@ -195,7 +196,6 @@ int saveData() {
 
     // Write total number of patients
     fwrite(&totalPatientsActive, sizeof(int), 1, patientFile);
-    fwrite(&totalPatients, sizeof(int), 1, patientFile);
 
     // Write each patient's data (excluding the next pointer)
     Patient *current = patientHead;
@@ -253,7 +253,6 @@ int loadData() {
 
     // Read total number of patients
     fread(&totalPatientsActive, sizeof(int), 1, patientFile);
-    fread(&totalPatients, sizeof(int), 1, patientFile);
 
     // Read and recreate each patient record
     Patient tempPatient;
@@ -362,7 +361,6 @@ int backupData() {
 
     // Write total number of patients
     fwrite(&totalPatientsActive, sizeof(int), 1, patientFile);
-    fwrite(&totalPatients, sizeof(int), 1, patientFile);
 
     // Write each patient's data (excluding the next pointer)
     Patient *current = patientHead;
@@ -556,7 +554,7 @@ int safeLoadData() {
 
     // Reset counters and list heads
     totalPatientsActive = 0;
-    totalPatients = 0;
+    totalDoctors = 0;
 
     patientHead = NULL;
     doctorHead = NULL;
@@ -632,7 +630,6 @@ int safeLoadData() {
         }
 
         totalPatientsActive++;
-        totalPatients++;
         printf("Loaded patient ID: %d\n", newPatient->patientID);
     }
     fclose(patientFile);
@@ -1023,7 +1020,6 @@ void dischargePatient() {
     getCurrentDateTime(patient->dischargeDate, sizeof(patient->dischargeDate));
     patient->isActive = 0;
     totalPatientsActive--;
-
 
     // Free up the room
     patient->patientRoomNum = 0;
@@ -1548,15 +1544,24 @@ void menu() {
 
         // Process user choice
         switch (choice) {
-            case 1: addPatient(); break;
-            case 2: viewPatients(); break;
-            case 3: searchPatient(); break;
-            case 4: dischargePatient(); break;
-            case 5: manageDoctorSchedule(); break;
-            case 6: viewSchedule(); break;
-            case 7: addDoctor(); break;
-            case 8: viewDoctors(); break;
-            case 9: generateReports();break;
+            case 1: addPatient();
+                break;
+            case 2: viewPatients();
+                break;
+            case 3: searchPatient();
+                break;
+            case 4: dischargePatient();
+                break;
+            case 5: manageDoctorSchedule();
+                break;
+            case 6: viewSchedule();
+                break;
+            case 7: addDoctor();
+                break;
+            case 8: viewDoctors();
+                break;
+            case 9: generateReports();
+                break;
             case 10: {
                 printf("\e[1;1H\e[2J");  // Clear the screen
                 printHeader("Restore Data from Backup");
@@ -1577,7 +1582,10 @@ void menu() {
                 returnToMenu();
                 break;
             }
-            case 11: printf("Exiting..."); break;
+            case 11:
+                saveData();
+                printf("Exiting...");
+                break;
             default: printf("Invalid choice! Try again.\n");
         }
     } while (choice != 11);
